@@ -68,29 +68,6 @@ class Three extends Component {
 
         // SCENE
         scene = new THREE.Scene();
-
-        // CAMERA
-        let fov = 60;
-        let aspect = window.innerWidth / window.innerHeight;
-        let near = 0.1;
-        let far = 10000;
-        camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-
-        camera.position.set(0, cameraHeight, 3);
-        camera.up = new THREE.Vector3(0, 1, 0);
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
-        cameraControl = new OrbitControls(camera, renderer.domElement);
-        const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
-        scene.add(light);
-        // MODELS
-        let geometry = new THREE.ConeGeometry();
-        let material = new THREE.MeshStandardMaterial({ color: "red", wireframe: false });
-        mesh = new THREE.Mesh(geometry, material);
-        mesh.name = "Cube";
-        mesh.position.set(0, 0.5, 0);
-
-        // GEOMETRY (SQUARE BUFFER GEOMETRY)
-        // let skybox = new THREE.BoxGeometry();
         const loader = new THREE.CubeTextureLoader();
         const texture = loader.load([
             SkyFront,
@@ -99,39 +76,56 @@ class Three extends Component {
             SkyDown,
             SkyRight,
             SkyLeft,
-            
+
         ]);
         scene.background = texture
-        
-        // MATERIAL
-        // let texture1 = new THREE.TextureLoader().load(require('src/img/corona_ft.png'))
-        // let texture2 = new THREE.TextureLoader().load('src/img/corona_bk.png')
-        // let texture3 = new THREE.TextureLoader().load('src/img/corona_up.png')
-        // let texture4 = new THREE.TextureLoader().load('src/img/corona_dn.png')
-        // let texture5 = new THREE.TextureLoader().load('src/img/corona_lf.png')
-        // let texture6 = new THREE.TextureLoader().load('src/img/corona_rt.png')
-        // let cubeMaterials = [
-        //     new THREE.MeshBasicMaterial({ map: texture1, side: THREE.BackSide }),
-        //     new THREE.MeshBasicMaterial({ map: texture2, side: THREE.BackSide }),
-        //     new THREE.MeshBasicMaterial({ map: texture3, side: THREE.BackSide }),
-        //     new THREE.MeshBasicMaterial({ map: texture4, side: THREE.BackSide }),
-        //     new THREE.MeshBasicMaterial({ map: texture5, side: THREE.BackSide }),
-        //     new THREE.MeshBasicMaterial({ map: texture6, side: THREE.BackSide })
-        // ]
 
-        // // MESH
-        // let mesh2 =  new THREE.Mesh(skybox, cubeMaterials);
+        // CAMERA
+        let fov = 60;
+        let aspect = window.innerWidth / window.innerHeight;
+        let near = 0.1;
+        let far = 10000;
+        camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-        // mesh2.scale.set(100,100,100)
-        // // SCENE HIERARCHY
-        // scene.add(mesh2);
-        // WORLD AXES
+        camera.position.set(3, cameraHeight, 3);
+        camera.up = new THREE.Vector3(0, 1, 0);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        cameraControl = new OrbitControls(camera, renderer.domElement);
+        // Light
+        // const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+        // scene.add(light);
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(0, 5, 0);
+        scene.add(light);
+        // MODELS
+        let material = new THREE.MeshLambertMaterial({ color: 0xaaaaaa, wireframe: false });
+        //Floor
+        let floorDepth = 4
+        let floorWidth = 4
+        let floorHeight = 0.4
+        let floorGeometry = new THREE.BoxGeometry(floorWidth, floorHeight, floorDepth);
+        let floor = new THREE.Mesh(floorGeometry, material);
+        floor.position.set(0, 0, 0);
+        //Right wall
+        let rWallDepth = 0.2
+        let rWallWidth = floorWidth
+        let rWallHeight = 2
+        let rWallGeometry = new THREE.BoxGeometry(rWallWidth, rWallHeight, rWallDepth);
+        let rightWall = new THREE.Mesh(rWallGeometry, material);
+        rightWall.position.set(0, rWallHeight / 2 - floorHeight / 2, rWallWidth / 2 * -1);
+        //Left wall
+        let lWallDepth = 0.2
+        let lWallWidth = floorWidth
+        let lWallHeight = 2
+        let lWallGeometry = new THREE.BoxGeometry(lWallWidth, lWallHeight, lWallDepth);
+        let leftWall = new THREE.Mesh(lWallGeometry, material);
+        leftWall.position.set(floorWidth / 2 * -1, lWallHeight / 2 - floorHeight / 2, 0);
+        leftWall.rotation.y = Math.PI / 2
         let worldAxes = new THREE.AxesHelper(10);
-        let floor = new Floor();
-        // scene.add(floor)
-        // SCENE GRAPH
-        // scene.add(mesh);
-        // scene.add(worldAxes);
+        scene.add(floor)
+        scene.add(rightWall)
+        scene.add(leftWall)
+        scene.add(worldAxes);
 
         this.renderLoop();
 
