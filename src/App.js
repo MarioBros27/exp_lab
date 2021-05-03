@@ -24,6 +24,7 @@ import TextField from '@material-ui/core/TextField';
 import { green } from '@material-ui/core/colors';
 import ListItemText from '@material-ui/core/ListItemText';
 import Slider from '@material-ui/core/Slider';
+import Button from '@material-ui/core/Button'
 
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -196,17 +197,17 @@ export default function App() {
             </IconButton>
 
             <IconButton
-              onClick={() => { }}
+              onClick={() => { childRef.current.play()}}
             >
               < PlayArrowIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              onClick={() => { }}
+              onClick={() => {childRef.current.pause() }}
             >
               < PauseIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              onClick={() => { }}
+              onClick={() => {childRef.current.stop() }}
             >
               < StopIcon color='secondary' fontSize='large' />
             </IconButton>
@@ -222,6 +223,7 @@ export default function App() {
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
               Conejos: {0}
             </Typography>
+            <Button color='secondary' onClick={() => {childRef.current.resetCamera() }}>Home</Button>
           </Toolbar>
         </AppBar>
         <Drawer

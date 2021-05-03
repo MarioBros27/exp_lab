@@ -7,11 +7,7 @@ import ReactDOM from "react-dom";
 import '../three.css'
 
 let renderer, scene, camera, cameraControl, mesh, stats, isPlaying;
-// let theta = 2 * Math.PI / 360
-let theta = 0
-let radius = 3;
 let cameraHeight = 2;
-let params = {}
 
 class Three extends Component {
     constructor(props){
@@ -19,6 +15,22 @@ class Three extends Component {
         console.log(props)
         this.renderLoop = this.renderLoop.bind(this)
         this.resizeFrame = this.resizeFrame.bind(this)
+        this.play = this.play.bind(this)
+        this.pause = this.pause.bind(this)
+        this.stop = this.stop.bind(this)
+        this.resetCamera = this.resetCamera.bind(this)
+    }
+    play(){
+        console.log("is playing")
+    }
+    pause(){
+        console.log("is paused")
+    }
+    stop(){
+        console.log("is stopped")
+    }
+    resetCamera(){
+        console.log("camera is reset")
     }
     resizeFrame(){
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -28,19 +40,7 @@ class Three extends Component {
     renderLoop() {
         // stats.begin();
         if (isPlaying) {
-            let newX, newZ
-            if (!params.counterClockwise) {
-                newX = radius * Math.sin(theta)
-                newZ = radius * Math.cos(theta)
-                theta += 2 * Math.PI / 360 * params.speed
-            } else {
-                newX = radius * Math.sin(theta) * -1
-                newZ = radius * Math.cos(theta) * -1
-                theta -= 2 * Math.PI / 360 * params.speed
-            }
-            camera.position.set(newX, cameraHeight, newZ);
-            camera.up = new THREE.Vector3(0, 1, 0);
-            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            
 
         }
 
