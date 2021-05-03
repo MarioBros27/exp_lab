@@ -22,6 +22,8 @@ import PauseIcon from '@material-ui/icons/Pause';
 import StopIcon from '@material-ui/icons/Stop';
 import TextField from '@material-ui/core/TextField';
 import { green } from '@material-ui/core/colors';
+import ListItemText from '@material-ui/core/ListItemText';
+import Slider from '@material-ui/core/Slider';
 
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -87,7 +89,40 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: 0,
   },
+  slider: {
+    marginLeft: '20px',
+    marginRight: '20px'
+  },
+  title:{
+    marginLeft: '20px',
+    marginRight: '20px'
+  },
+  years:{
+    marginRight:"20px"
+  }
 }));
+const marks = [
+  {
+    value: 0.2,
+    label: '0.2',
+  },
+  {
+    value: 0.5,
+    label: '0.5',
+  },
+  {
+    value: 1,
+    label: '1',
+  },
+  {
+    value: 2,
+    label: '2',
+  },
+  {
+    value: 3,
+    label: '3',
+  }
+];
 const animals = [{
   id: 0,
   name: "Gato",
@@ -175,8 +210,17 @@ export default function App() {
             >
               < StopIcon color='secondary' fontSize='large' />
             </IconButton>
-            <Typography variant="h6" noWrap>
+            <Typography className={classes.years} color="primary" variant="h6" noWrap>
               Años: {0}
+            </Typography>
+            <Typography className={classes.title}color="primary" variant="h6" noWrap>
+              Perros: {0}
+            </Typography>
+            <Typography className={classes.title} color="primary" variant="h6" noWrap>
+              Gatos: {0}
+            </Typography>
+            <Typography className={classes.title} color="primary" variant="h6" noWrap>
+              Conejos: {0}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -198,16 +242,32 @@ export default function App() {
             </IconButton>
           </div>
           <Divider />
+          <div className={classes.slider}>
+            <Typography gutterBottom>
+              1 año es en segundos:
+            </Typography>
+            <Slider
+              defaultValue={0.2}
+              step={0.2}
+              min={0.2}
+              max={3}
+              aria-labelledby="discrete-slider-custom"
+              valueLabelDisplay="auto"
+              marks
+            />
+          </div>
+          <Divider />
 
           <List key={0} dense>
             {animals.map(animal => {
               return (
                 <>
-                  <ListItem key={animal.id + 100}>
-                    <Typography variant="h5">
+                  <ListItem dense key={animal.id + 100}>
+                    <Typography variant="h6">
                       {animal.name}
                     </Typography>
                   </ListItem>
+                  {/* <ListItemText primary={animal.name}/> */}
                   <ListItem dense key={animal.id}>
                     <FormControl fullWidth variant="outlined">
                       <OutlinedInput
@@ -223,7 +283,7 @@ export default function App() {
                     </FormControl>
 
                   </ListItem>
-                  <ListItem>
+                  <ListItem dense>
                     <FormControl fullWidth variant="outlined">
                       <OutlinedInput
                         id={animal.name + "Pn"}
@@ -236,7 +296,7 @@ export default function App() {
                       />
                     </FormControl>
                   </ListItem>
-                  <ListItem>
+                  <ListItem dense>
                     <FormControl fullWidth variant="outlined">
                       <OutlinedInput
                         id={animal.name + "Pn-1"}
