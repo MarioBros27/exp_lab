@@ -2,7 +2,7 @@ import * as THREE from '../../src/build/three.module.js';
 import { OrbitControls } from '../../src/js/jsm/controls/OrbitControls.js';
 // import Stats from '../../src/js/jsm/libs/stats.module.js';
 // import dat from '../../src/js/jsm/libs/dat.gui.module.js';
-import React, { Component } from "react";
+import React, { Component} from "react";
 import ReactDOM from "react-dom";
 import '../three.css'
 
@@ -10,15 +10,20 @@ let renderer, scene, camera, cameraControl, mesh, stats, isPlaying;
 // let theta = 2 * Math.PI / 360
 let theta = 0
 let radius = 3;
-let cameraHeight = 0;
+let cameraHeight = 2;
 let params = {}
-let sidebarWidth = 0
+
 class Three extends Component {
     constructor(props){
         super(props);
         console.log(props)
-        sidebarWidth = props.width
         this.renderLoop = this.renderLoop.bind(this)
+        this.resizeFrame = this.resizeFrame.bind(this)
+    }
+    resizeFrame(){
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth/ window.innerHeight;
+        camera.updateProjectionMatrix();
     }
     renderLoop() {
         // stats.begin();
@@ -49,7 +54,7 @@ class Three extends Component {
     componentDidMount() {
         // RENDERER
         renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth-sidebarWidth, window.innerHeight);
+        renderer.setSize(window.innerWidth, window.innerHeight);
         //renderer.setClearColor(new THREE.Color(0.2, 0.2, 0.35));
         this.mount.appendChild(renderer.domElement);
 
@@ -63,7 +68,7 @@ class Three extends Component {
         let far = 10000;
         camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-        camera.position.set(0, cameraHeight, radius);
+        camera.position.set(0, cameraHeight, 3);
         camera.up = new THREE.Vector3(0, 1, 0);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
         cameraControl = new OrbitControls(camera, renderer.domElement);
@@ -84,11 +89,8 @@ class Three extends Component {
         scene.add(worldAxes);
 
         this.renderLoop();
-        window.addEventListener("resize", function () {
-            renderer.setSize(window.innerWidth-sidebarWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-        });
+
+        window.addEventListener("resize", this.resizeFrame);
     }
 
     
