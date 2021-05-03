@@ -121,11 +121,11 @@ class Three extends Component {
         let leftWall = new THREE.Mesh(lWallGeometry, material);
         leftWall.position.set(floorWidth / 2 * -1, lWallHeight / 2 - floorHeight / 2, 0);
         leftWall.rotation.y = Math.PI / 2
-        let worldAxes = new THREE.AxesHelper(10);
+        // let worldAxes = new THREE.AxesHelper(10);
         scene.add(floor)
         scene.add(rightWall)
         scene.add(leftWall)
-        scene.add(worldAxes);
+        // scene.add(worldAxes);
 
         this.renderLoop();
 

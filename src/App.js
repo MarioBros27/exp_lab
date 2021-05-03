@@ -32,7 +32,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 
-const drawerWidth = 200;
+const drawerWidth = 180;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -237,7 +237,7 @@ export default function App() {
         >
           <div className={classes.drawerHeader}>
             <IconButton >
-              <InfoSharpIcon fontSize="large" />Fórmulas
+              <InfoSharpIcon fontSize="large" />Ayuda
             </IconButton>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
