@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
 const animals = [{
   id: 0,
   name: "Gato",
-  p0: 20,
+  p0: 2,
   pn: 3,
   pn1: 4,
   p:0
@@ -114,7 +114,7 @@ const animals = [{
 {
   id: 1,
   name: "Perro",
-  p0: 20,
+  p0: 2,
   pn: 3,
   pn1: 4,
   p:0
@@ -122,7 +122,7 @@ const animals = [{
 {
   id: 2,
   name: "Conejo",
-  p0: 20,
+  p0: 2,
   pn: 3,
   pn1: 4,
   p:0
@@ -130,6 +130,8 @@ const animals = [{
 
 ]
 let time = 0.5
+const min = 0
+const max = 30
 export default function App() {
   const classes = useStyles();
   // const theme = useTheme();
@@ -320,7 +322,7 @@ export default function App() {
                   value={animal0P0}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: 0, max: 30 } }
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => {setAnimal0P0(e.target.value);setAnimal0P(e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
@@ -334,6 +336,7 @@ export default function App() {
                   value={animal0Pn}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => setAnimal0Pn(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
                 />
@@ -347,6 +350,7 @@ export default function App() {
                   value={animal0Pn1}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => setAnimal0Pn1(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
                 />
@@ -367,6 +371,7 @@ export default function App() {
                   value={animal1P0}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => {setAnimal1P0(e.target.value);setAnimal1P(e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
@@ -380,6 +385,7 @@ export default function App() {
                   value={animal1Pn}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => setAnimal1Pn(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
                 />
@@ -393,6 +399,7 @@ export default function App() {
                   value={animal1Pn1}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => setAnimal1Pn1(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
                 />
@@ -413,6 +420,7 @@ export default function App() {
                   value={animal2P0}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => {setAnimal2P0(e.target.value);setAnimal2P(e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
@@ -426,6 +434,7 @@ export default function App() {
                   value={animal2Pn}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => setAnimal2Pn(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
                 />
@@ -439,6 +448,7 @@ export default function App() {
                   value={animal2Pn1}
                   margin="dense"
                   type="number"
+                  inputProps={{ min: min, max: max} }
                   onChange={(e) => setAnimal2Pn1(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
                 />

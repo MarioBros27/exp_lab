@@ -10,16 +10,16 @@ import SkyUp from '../img/corona_up.png'
 import SkyDown from '../img/corona_dn.png'
 import SkyLeft from '../img/corona_lf.png'
 import SkyRight from '../img/corona_rt.png'
+import { LeakAddTwoTone } from '@material-ui/icons';
 
 let renderer, scene, camera, cameraControl, isPlaying, animals, clock, timeSpeed, nextTime;
-let animal1Geometry, animal2Geometry, animal3Geometry, animalsMaterial;
-
+let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
+let floorWidth, floorOffset
 let cameraHeight = 2;
 
 class Three extends Component {
     constructor(props) {
         super(props);
-        console.log(props)
         animals = props.animals
         isPlaying = false
         this.renderLoop = this.renderLoop.bind(this)
@@ -52,10 +52,11 @@ class Three extends Component {
         animals[0].meshes = []
         animals[1].meshes = []
         animals[2].meshes = []
+        console.log(animals)
         this.updateAnimalMeshCount(0, animals[0].p)
-        this.updateAnimalMeshCount(0, animals[1].p)
-        this.updateAnimalMeshCount(0, animals[2].p)
-
+        this.updateAnimalMeshCount(1, animals[1].p)
+        this.updateAnimalMeshCount(2, animals[2].p)
+        console.log(animals)
     }
     setUpPlayingScene() {
         animals[0].p = animals[0].p0
@@ -68,24 +69,49 @@ class Three extends Component {
         let difference = thisMany - animals[animalIndex].meshes.length
         console.log(animals)
         if (difference === 0 ) { return }
+        var i
         if (difference > 0) { //Add animals
-            for (var i = 0; i < difference; i++) {
+            i = 0
+            for ( i; i < difference; i++) {
                 this.putAnimalMesh(animalIndex)
             }
         } else if (difference < 0) { //Kill animals
-            for (var i = difference; i < 0; i++) {
+            i = difference
+            for (i ; i < 0; i++) {
                 this.deleteAnimalMesh(animalIndex)
             }
         }
     }
     putAnimalMesh(animalIndex) {
+        let mesh;
+        if(animalIndex === 0){
+            mesh = new THREE.Mesh(animal0Geometry,animalsMaterial)
+            animals[0].meshes.push(mesh)
+        }else if(animalIndex === 1){
+            mesh = new THREE.Mesh(animal1Geometry,animalsMaterial)
+            animals[1].meshes.push(mesh)
+        }else if(animalIndex === 2){
+            mesh = new THREE.Mesh(animal2Geometry,animalsMaterial)
+            animals[2].meshes.push(mesh)
+        }
+        this.setAnimalRandomPosition(mesh)
 
     }
     deleteAnimalMesh(animalIndex) {
 
     }
     setAnimalRandomPosition(mesh) {
-
+        //TODO consider the model width that could exeed the border
+        let randomX = Math.random() * floorWidth/2
+        if(Math.random() > 0.5){randomX = randomX* -1}
+        console.log(randomX)
+        let randomZ = Math.random() * floorWidth/2
+        if(Math.random() > 0.5){randomZ = randomZ* -1}
+        console.log(randomZ)
+        //TODO get the height of the mesh and add half of it to the y position
+        console.log(mesh)
+        mesh.position.set(randomX, floorOffset +mesh.geometry.parameters.height/2, randomZ)
+        scene.add(mesh)
     }
     play(animalsIn, timeSpeedIn) {
         animals = animalsIn
@@ -170,8 +196,9 @@ class Three extends Component {
         let material = new THREE.MeshLambertMaterial({ color: 0xaaaaaa, wireframe: false });
         //Floor
         let floorDepth = 4
-        let floorWidth = 4
+        floorWidth = 4
         let floorHeight = 0.4
+        floorOffset = floorHeight/2
         let floorGeometry = new THREE.BoxGeometry(floorWidth, floorHeight, floorDepth);
         let floor = new THREE.Mesh(floorGeometry, material);
         floor.position.set(0, 0, 0);
@@ -192,19 +219,28 @@ class Three extends Component {
         leftWall.rotation.y = Math.PI / 2
         // let worldAxes = new THREE.AxesHelper(10);
         //Animals material
-        animalsMaterial = new THREE.MeshLambertMaterial({ color: 0xaaaaaa, wireframe: false });
+        //Change to MeshLambertMaterial to add shadows
+        animalsMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: false });
+        //Animal0  Geometry
+        animal0Geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3)
         //Animal1  Geometry
-        animal1Geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3)
+        animal1Geometry = new THREE.ConeGeometry(0.15, 0.3, 20);
         //Animal2  Geometry
-        animal2Geometry = new THREE.ConeGeometry(0.15, 0.3, 20);
-        //Animal3  Geometry
-        animal3Geometry = new THREE.CylinderGeometry(0.15, 0.15, 0.3, 20);
+        animal2Geometry = new THREE.CylinderGeometry(0.15, 0.15, 0.3, 20);
 
+        // let ani1 = new THREE.Mesh(animal0Geometry, animalsMaterial)
+        // let ani2 = new THREE.Mesh(animal1Geometry, animalsMaterial)
+        // let ani3 = new THREE.Mesh(animal2Geometry, animalsMaterial)
+        // ani1.position.set(0,1,0)
+        // ani2.position.set(1,1,0)
+        // ani3.position.set(2,1,0)
         //Adding Scene Objects
         scene.add(floor)
         scene.add(rightWall)
         scene.add(leftWall)
-
+        // scene.add(ani1)
+        // scene.add(ani2)
+        // scene.add(ani3)
         this.initializeAnimalsMeshes()
         // scene.add(worldAxes);
         // isPlaying = false
