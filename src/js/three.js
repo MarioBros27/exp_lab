@@ -10,7 +10,6 @@ import SkyUp from '../img/corona_up.png'
 import SkyDown from '../img/corona_dn.png'
 import SkyLeft from '../img/corona_lf.png'
 import SkyRight from '../img/corona_rt.png'
-import { LeakAddTwoTone } from '@material-ui/icons';
 
 let renderer, scene, camera, cameraControl, isPlaying, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
@@ -228,23 +227,11 @@ class Three extends Component {
         animal1Geometry = new THREE.ConeGeometry(0.05, 0.05, 20);
         //Animal2  Geometry
         animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
-
-        // let ani1 = new THREE.Mesh(animal0Geometry, animalsMaterial)
-        // let ani2 = new THREE.Mesh(animal1Geometry, animalsMaterial)
-        // let ani3 = new THREE.Mesh(animal2Geometry, animalsMaterial)
-        // ani1.position.set(0,1,0)
-        // ani2.position.set(1,1,0)
-        // ani3.position.set(2,1,0)
         //Adding Scene Objects
         scene.add(floor)
         scene.add(rightWall)
         scene.add(leftWall)
-        // scene.add(ani1)
-        // scene.add(ani2)
-        // scene.add(ani3)
         this.initializeAnimalsMeshes()
-        // scene.add(worldAxes);
-        // isPlaying = false
         this.renderLoop();
 
         window.addEventListener("resize", this.resizeFrame);
