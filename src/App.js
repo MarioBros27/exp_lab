@@ -323,7 +323,7 @@ export default function App() {
                   margin="dense"
                   type="number"
                   inputProps={{ min: min, max: max} }
-                  onChange={(e) => {setAnimal0P0(e.target.value);setAnimal0P(e.target.value)}}
+                  onChange={(e) => {setAnimal0P0(e.target.value);setAnimal0P(e.target.value);childRef.current.updateAnimalMeshCount(0,e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>
@@ -372,7 +372,7 @@ export default function App() {
                   margin="dense"
                   type="number"
                   inputProps={{ min: min, max: max} }
-                  onChange={(e) => {setAnimal1P0(e.target.value);setAnimal1P(e.target.value)}}
+                  onChange={(e) => {setAnimal1P0(e.target.value);setAnimal1P(e.target.value);childRef.current.updateAnimalMeshCount(1,e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>
@@ -421,7 +421,7 @@ export default function App() {
                   margin="dense"
                   type="number"
                   inputProps={{ min: min, max: max} }
-                  onChange={(e) => {setAnimal2P0(e.target.value);setAnimal2P(e.target.value)}}
+                  onChange={(e) => {setAnimal2P0(e.target.value);setAnimal2P(e.target.value);childRef.current.updateAnimalMeshCount(2,e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>

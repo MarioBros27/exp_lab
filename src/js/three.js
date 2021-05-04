@@ -98,7 +98,8 @@ class Three extends Component {
 
     }
     deleteAnimalMesh(animalIndex) {
-
+        const animal = animals[animalIndex].meshes.pop()
+        scene.remove(animal)
     }
     setAnimalRandomPosition(mesh) {
         //TODO consider the model width that could exeed the border
@@ -222,11 +223,11 @@ class Three extends Component {
         //Change to MeshLambertMaterial to add shadows
         animalsMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: false });
         //Animal0  Geometry
-        animal0Geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3)
+        animal0Geometry = new THREE.BoxGeometry(0.05, 0.05, 0.05)
         //Animal1  Geometry
-        animal1Geometry = new THREE.ConeGeometry(0.15, 0.3, 20);
+        animal1Geometry = new THREE.ConeGeometry(0.05, 0.05, 20);
         //Animal2  Geometry
-        animal2Geometry = new THREE.CylinderGeometry(0.15, 0.15, 0.3, 20);
+        animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
 
         // let ani1 = new THREE.Mesh(animal0Geometry, animalsMaterial)
         // let ani2 = new THREE.Mesh(animal1Geometry, animalsMaterial)
