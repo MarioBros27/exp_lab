@@ -102,63 +102,38 @@ const useStyles = makeStyles((theme) => ({
     marginRight: "20px"
   }
 }));
-const marks = [
-  {
-    value: 0.2,
-    label: '0.2',
-  },
-  {
-    value: 0.5,
-    label: '0.5',
-  },
-  {
-    value: 1,
-    label: '1',
-  },
-  {
-    value: 2,
-    label: '2',
-  },
-  {
-    value: 3,
-    label: '3',
-  }
-];
+
 const animals = [{
   id: 0,
-  name: "Gato"
+  name: "Gato",
+  p0: 20,
+  pn: 3,
+  pn1: 4
 },
 {
   id: 1,
-  name: "Perro"
+  name: "Perro",
+  p0: 20,
+  pn: 3,
+  pn1: 4
 },
 {
   id: 2,
-  name: "Conejo"
+  name: "Conejo",
+  p0: 20,
+  pn: 3,
+  pn1: 4
 }
 
 ]
-
-let time = 0.2
+let time = 0.5
 export default function App() {
   const classes = useStyles();
   // const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [pauseStop, setPauseStop] = useState(true)
-  const [play, setPlay] = useState(false)
+  const [pauseStopDisabled, setPauseStopDisabled] = useState(true)
+  const [playDisabled, setPlayDisabled] = useState(false)
   const childRef = useRef();
-  // animals.map(animal =>{
-  //   const [p0,setP0] =useState(0)
-  //   const [pn,setPn] =useState(0)
-  //   const [pn1,setPn1] =useState(0)
-  //   animal['p0'] = p0
-  //   animal['pn'] = pn
-  //   animal['pn1'] = pn1
-  //   animal['setP0'] = setP0
-  //   animal['setPn'] = setPn
-  //   animal['setPn1'] = setPn1
-  // })
-  // console.log(animals)
   const [animal0P0, setAnimal0P0] = useState(0)
   const [animal0Pn, setAnimal0Pn] = useState(0)
   const [animal0Pn1, setAnimal0Pn1] = useState(0)
@@ -168,7 +143,7 @@ export default function App() {
   const [animal2P0, setAnimal2P0] = useState(0)
   const [animal2Pn, setAnimal2Pn] = useState(0)
   const [animal2Pn1, setAnimal2Pn1] = useState(0)
-
+  // const [time, setTime] = useState(0.5)
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -192,8 +167,13 @@ export default function App() {
 
   const handleSliderChange = (event, value) => {
     if (time !== value) {
+      // setTime(value)
       time = value
       console.log(time)
+      if (playDisabled) {
+        console.log("fuck you")
+        childRef.current.changeTimeSpeed(value)
+      }
     }
   }
 
@@ -242,28 +222,28 @@ export default function App() {
             </IconButton>
 
             <IconButton
-              disabled={play}
+              disabled={playDisabled}
               onClick={() => {
                 const ok = validateInput()
                 console.log(ok)
                 if (ok) {
-                  setPauseStop(false);
-                  setPlay(true);
-                  childRef.current.play();
+                  setPauseStopDisabled(false);
+                  setPlayDisabled(true);
+                  childRef.current.play(animals, time);
                 }
               }}
             >
               < PlayArrowIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              disabled={pauseStop}
-              onClick={() => { childRef.current.pause(); if (play) { setPlay(false) } }}
+              disabled={pauseStopDisabled}
+              onClick={() => { childRef.current.pause(); if (playDisabled) { setPlayDisabled(false) } }}
             >
               < PauseIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              disabled={pauseStop}
-              onClick={() => { childRef.current.stop(); setPauseStop(true); setPlay(false) }}
+              disabled={pauseStopDisabled}
+              onClick={() => { childRef.current.stop(); setPauseStopDisabled(true); setPlayDisabled(false) }}
             >
               < StopIcon color='secondary' fontSize='large' />
             </IconButton>
@@ -305,9 +285,10 @@ export default function App() {
               1 año es en segundos:
             </Typography>
             <Slider
+              key={`slider-${time}`}
               defaultValue={time}
-              step={0.2}
-              min={0.2}
+              step={0.5}
+              min={0.5}
               max={3}
               onChange={handleSliderChange}
               aria-labelledby="discrete-slider-custom"

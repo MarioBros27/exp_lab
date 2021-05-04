@@ -3,7 +3,6 @@ import { OrbitControls } from '../../src/js/jsm/controls/OrbitControls.js';
 // import Stats from '../../src/js/jsm/libs/stats.module.js';
 // import dat from '../../src/js/jsm/libs/dat.gui.module.js';
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import '../three.css'
 import SkyFront from '../img/corona_ft.png'
 import SkyBack from '../img/corona_bk.png'
@@ -11,8 +10,8 @@ import SkyUp from '../img/corona_up.png'
 import SkyDown from '../img/corona_dn.png'
 import SkyLeft from '../img/corona_lf.png'
 import SkyRight from '../img/corona_rt.png'
-import Crate from '../img/crate.jpg'
-let renderer, scene, camera, cameraControl, mesh, stats, isPlaying;
+
+let renderer, scene, camera, cameraControl, isPlaying, animals, clock, timeSpeed, nextTime;
 let cameraHeight = 2;
 
 class Three extends Component {
@@ -25,15 +24,34 @@ class Three extends Component {
         this.pause = this.pause.bind(this)
         this.stop = this.stop.bind(this)
         this.resetCamera = this.resetCamera.bind(this)
+        this.updateScene = this.updateScene.bind(this)
+        this.changeTimeSpeed = this.changeTimeSpeed.bind(this)
     }
-    play() {
+    updateScene(){
+        let time = Math.round(clock.getElapsedTime() * 10) / 10
+        if (time > nextTime){
+            console.log("time",time)
+            console.log("nexTime", nextTime)
+            console.log("timeSpeed", timeSpeed)
+            nextTime += timeSpeed
+        }
+        
+    }
+    play(animalsIn,timeSpeedIn) {
+        animals = animalsIn
+        timeSpeed = timeSpeedIn
+        nextTime = timeSpeedIn
         console.log("is playing")
+        clock = new THREE.Clock()
+        isPlaying = true
     }
     pause() {
         console.log("is paused")
+        isPlaying = false
     }
     stop() {
         console.log("is stopped")
+        isPlaying = false
     }
     resetCamera() {
         camera.position.set(3, cameraHeight, 3);
@@ -45,17 +63,16 @@ class Three extends Component {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
     }
+    changeTimeSpeed(value){
+        console.log("changinTime:", value)
+        timeSpeed = value
+    }
     renderLoop() {
         // stats.begin();
         if (isPlaying) {
-
-
+            this.updateScene()
         }
-
         renderer.render(scene, camera); // DRAW SCENE
-        // updateScene();
-        // stats.end();
-        // stats.update();
         requestAnimationFrame(this.renderLoop);
     }
 
@@ -128,19 +145,12 @@ class Three extends Component {
         scene.add(rightWall)
         scene.add(leftWall)
         // scene.add(worldAxes);
+        isPlaying = false
 
         this.renderLoop();
 
         window.addEventListener("resize", this.resizeFrame);
     }
-
-
-
-    // updateScene() {
-    // }
-
-
-
     render() {
         return <div ref={ref => (this.mount = ref)} />;
     }
