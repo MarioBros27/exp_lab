@@ -94,12 +94,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '20px',
     marginRight: '20px'
   },
-  title:{
+  title: {
     marginLeft: '20px',
     marginRight: '20px'
   },
-  years:{
-    marginRight:"20px"
+  years: {
+    marginRight: "20px"
   }
 }));
 const marks = [
@@ -151,6 +151,8 @@ export default function App() {
   const classes = useStyles();
   // const theme = useTheme();
   const [open, setOpen] = useState(true);
+  const [pauseStop, setPauseStop] = useState(true)
+  const [play, setPlay] = useState(false)
   const childRef = useRef();
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -197,24 +199,27 @@ export default function App() {
             </IconButton>
 
             <IconButton
-              onClick={() => { childRef.current.play()}}
+            disabled={play}
+              onClick={() => { childRef.current.play();setPauseStop(false);setPlay(true) }}
             >
               < PlayArrowIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              onClick={() => {childRef.current.pause() }}
+              disabled={pauseStop}
+              onClick={() => { childRef.current.pause();if(play){setPlay(false)} }}
             >
               < PauseIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              onClick={() => {childRef.current.stop() }}
+              disabled={pauseStop}
+              onClick={() => { childRef.current.stop();setPauseStop(true);setPlay(false) }}
             >
               < StopIcon color='secondary' fontSize='large' />
             </IconButton>
             <Typography className={classes.years} color="primary" variant="h6" noWrap>
               Años: {0}
             </Typography>
-            <Typography className={classes.title}color="primary" variant="h6" noWrap>
+            <Typography className={classes.title} color="primary" variant="h6" noWrap>
               Perros: {0}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
@@ -223,7 +228,7 @@ export default function App() {
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
               Conejos: {0}
             </Typography>
-            <Button color='secondary' onClick={() => {childRef.current.resetCamera() }}>Home</Button>
+            <Button variant="contained" color='secondary' onClick={() => { childRef.current.resetCamera() }}>Home</Button>
           </Toolbar>
         </AppBar>
         <Drawer

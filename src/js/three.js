@@ -36,7 +36,9 @@ class Three extends Component {
         console.log("is stopped")
     }
     resetCamera() {
-        console.log("camera is reset")
+        camera.position.set(3, cameraHeight, 3);
+        camera.up = new THREE.Vector3(0, 1, 0);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
     }
     resizeFrame() {
         renderer.setSize(window.innerWidth, window.innerHeight);
