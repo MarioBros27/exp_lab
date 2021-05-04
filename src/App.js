@@ -126,27 +126,20 @@ const marks = [
 ];
 const animals = [{
   id: 0,
-  name: "Gato",
-  Po: 0,
-  Pn: 0,
-  "Pn-1": 0
+  name: "Gato"
 },
 {
   id: 1,
-  name: "Perro",
-  Po: 0,
-  Pn: 0,
-  "Pn-1": 0
+  name: "Perro"
 },
 {
   id: 2,
-  name: "Conejo",
-  Po: 0,
-  Pn: 0,
-  "Pn-1": 0
+  name: "Conejo"
 }
 
 ]
+
+let time = 0.2
 export default function App() {
   const classes = useStyles();
   // const theme = useTheme();
@@ -154,6 +147,36 @@ export default function App() {
   const [pauseStop, setPauseStop] = useState(true)
   const [play, setPlay] = useState(false)
   const childRef = useRef();
+  // animals.map(animal =>{
+  //   const [p0,setP0] =useState(0)
+  //   const [pn,setPn] =useState(0)
+  //   const [pn1,setPn1] =useState(0)
+  //   animal['p0'] = p0
+  //   animal['pn'] = pn
+  //   animal['pn1'] = pn1
+  //   animal['setP0'] = setP0
+  //   animal['setPn'] = setPn
+  //   animal['setPn1'] = setPn1
+  // })
+  // console.log(animals)
+  const [animal0P0, setAnimal0P0] = useState(0)
+  const [animal0Pn, setAnimal0Pn] = useState(0)
+  const [animal0Pn1, setAnimal0Pn1] = useState(0)
+  const [animal1P0, setAnimal1P0] = useState(0)
+  const [animal1Pn, setAnimal1Pn] = useState(0)
+  const [animal1Pn1, setAnimal1Pn1] = useState(0)
+  const [animal2P0, setAnimal2P0] = useState(0)
+  const [animal2Pn, setAnimal2Pn] = useState(0)
+  const [animal2Pn1, setAnimal2Pn1] = useState(0)
+  animals[0]['p0'] = animal0P0
+  animals[1]['p0'] = animal1P0
+  animals[2]['p0'] = animal2P0
+  animals[0]['pn'] = animal0Pn
+  animals[1]['pn'] = animal1Pn
+  animals[2]['pn'] = animal2Pn
+  animals[0]['pn1'] = animal0Pn1
+  animals[1]['pn1'] = animal1Pn1
+  animals[2]['pn1'] = animal2Pn1
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -175,6 +198,29 @@ export default function App() {
     [prefersDarkMode],
   );
 
+  const handleSliderChange = (event, value) => {
+    if (time !== value) {
+      time = value
+      console.log(time)
+    }
+  }
+  const handleTextChange = (id, property, value) => {
+    console.log(id)
+    console.log(property)
+    console.log(value)
+    // let animal = animals.find(x => x.id === id);
+    // animal[property] = value
+    // console.log(animal[property].value)
+    // if(id ===0){
+    //   animal
+    // }else if(id ===1){
+
+    // }else if(id ===2)
+    
+  }
+  const validateInput = ()=>{
+    
+  }
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
@@ -199,20 +245,29 @@ export default function App() {
             </IconButton>
 
             <IconButton
-            disabled={play}
-              onClick={() => { childRef.current.play();setPauseStop(false);setPlay(true) }}
+              disabled={play}
+              onClick={() => { 
+
+                setPauseStop(false); 
+                setPlay(true);
+                // if(validateInput){
+                //   childRef.current.play(); 
+                // }else{
+                //   alert("no debe de dejar espacio vacio, puede dejar 0 si no quiere hacer uso")
+                // }
+              }}
             >
               < PlayArrowIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
               disabled={pauseStop}
-              onClick={() => { childRef.current.pause();if(play){setPlay(false)} }}
+              onClick={() => { childRef.current.pause(); if (play) { setPlay(false) } }}
             >
               < PauseIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
               disabled={pauseStop}
-              onClick={() => { childRef.current.stop();setPauseStop(true);setPlay(false) }}
+              onClick={() => { childRef.current.stop(); setPauseStop(true); setPlay(false) }}
             >
               < StopIcon color='secondary' fontSize='large' />
             </IconButton>
@@ -254,10 +309,11 @@ export default function App() {
               1 año es en segundos:
             </Typography>
             <Slider
-              defaultValue={0.2}
+              defaultValue={time}
               step={0.2}
               min={0.2}
               max={3}
+              onChange={handleSliderChange}
               aria-labelledby="discrete-slider-custom"
               valueLabelDisplay="auto"
               marks
@@ -279,10 +335,10 @@ export default function App() {
                     <FormControl fullWidth variant="outlined">
                       <OutlinedInput
                         id={animal.name}
-                        value={animal['Po']}
+                        value={animal['p0']}
                         margin="dense"
                         // value={values.amount}
-                        // onChange={handleChange('amount')}
+                        onChange={(e) => handleTextChange(animal.id, 'po', e.target.value)}
                         startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                       // labelWidth={60}
                       />
@@ -293,11 +349,11 @@ export default function App() {
                   <ListItem dense>
                     <FormControl fullWidth variant="outlined">
                       <OutlinedInput
-                        id={animal.name + "Pn"}
-                        value={animal['Pn']}
+                        id={animal.name + "pn"}
+                        value={animal['pn']}
                         margin="dense"
                         // value={values.amount}
-                        // onChange={handleChange('amount')}
+                        onChange={(e) => handleTextChange(animal.id, 'pn', e.target.value)}
                         startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
                       // labelWidth={60}
                       />
@@ -307,10 +363,10 @@ export default function App() {
                     <FormControl fullWidth variant="outlined">
                       <OutlinedInput
                         id={animal.name + "Pn-1"}
-                        value={animal['Pn-1']}
+                        value={animal['pn1']}
                         margin="dense"
                         // value={values.amount}
-                        // onChange={handleChange('amount')}
+                        onChange={(e) => handleTextChange(animal.id, 'pn1', e.target.value)}
                         startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
                       // labelWidth={60}
                       />
