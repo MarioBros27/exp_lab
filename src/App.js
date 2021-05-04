@@ -108,21 +108,24 @@ const animals = [{
   name: "Gato",
   p0: 20,
   pn: 3,
-  pn1: 4
+  pn1: 4,
+  p:0
 },
 {
   id: 1,
   name: "Perro",
   p0: 20,
   pn: 3,
-  pn1: 4
+  pn1: 4,
+  p:0
 },
 {
   id: 2,
   name: "Conejo",
   p0: 20,
   pn: 3,
-  pn1: 4
+  pn1: 4,
+  p:0
 }
 
 ]
@@ -134,15 +137,19 @@ export default function App() {
   const [pauseStopDisabled, setPauseStopDisabled] = useState(true)
   const [playDisabled, setPlayDisabled] = useState(false)
   const childRef = useRef();
-  const [animal0P0, setAnimal0P0] = useState(0)
-  const [animal0Pn, setAnimal0Pn] = useState(0)
-  const [animal0Pn1, setAnimal0Pn1] = useState(0)
-  const [animal1P0, setAnimal1P0] = useState(0)
-  const [animal1Pn, setAnimal1Pn] = useState(0)
-  const [animal1Pn1, setAnimal1Pn1] = useState(0)
-  const [animal2P0, setAnimal2P0] = useState(0)
-  const [animal2Pn, setAnimal2Pn] = useState(0)
-  const [animal2Pn1, setAnimal2Pn1] = useState(0)
+  const [animal0P, setAnimal0P] = useState(animals[0].p0)
+  const [animal0P0, setAnimal0P0] = useState(animals[0].p0)
+  const [animal0Pn, setAnimal0Pn] = useState(animals[0].pn)
+  const [animal0Pn1, setAnimal0Pn1] = useState(animals[0].pn1)
+  const [animal1P, setAnimal1P] = useState(animals[1].p0)
+  const [animal1P0, setAnimal1P0] = useState(animals[1].p0)
+  const [animal1Pn, setAnimal1Pn] = useState(animals[1].pn)
+  const [animal1Pn1, setAnimal1Pn1] = useState(animals[1].pn1)
+  const [animal2P, setAnimal2P] = useState(animals[2].p0)
+  const [animal2P0, setAnimal2P0] = useState(animals[2].p0)
+  const [animal2Pn, setAnimal2Pn] = useState(animals[2].pn)
+  const [animal2Pn1, setAnimal2Pn1] = useState(animals[2].pn1)
+  const [years, setYears] = useState(0)
   // const [time, setTime] = useState(0.5)
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -202,7 +209,7 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <CssBaseline />
-        <Three ref={childRef} />
+        <Three ref={childRef} animals={animals} />
         <AppBar
           position="fixed"
           className={clsx(classes.appBar, {
@@ -248,16 +255,16 @@ export default function App() {
               < StopIcon color='secondary' fontSize='large' />
             </IconButton>
             <Typography className={classes.years} color="primary" variant="h6" noWrap>
-              Años: {0}
+              Años: {years}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-              Perros: {0}
+              {`${animals[0].name}s:`} {animal0P}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-              Gatos: {0}
+            {`${animals[1].name}s:`} {animal1P}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-              Conejos: {0}
+            {`${animals[2].name}s:`} {animal2P}
             </Typography>
             <Button variant="contained" color='secondary' onClick={() => { childRef.current.resetCamera() }}>Home</Button>
           </Toolbar>
@@ -313,7 +320,8 @@ export default function App() {
                   value={animal0P0}
                   margin="dense"
                   type="number"
-                  onChange={(e) => setAnimal0P0(e.target.value)}
+                  inputProps={{ min: 0, max: 30 } }
+                  onChange={(e) => {setAnimal0P0(e.target.value);setAnimal0P(e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>
@@ -359,7 +367,7 @@ export default function App() {
                   value={animal1P0}
                   margin="dense"
                   type="number"
-                  onChange={(e) => setAnimal1P0(e.target.value)}
+                  onChange={(e) => {setAnimal1P0(e.target.value);setAnimal1P(e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>
@@ -405,7 +413,7 @@ export default function App() {
                   value={animal2P0}
                   margin="dense"
                   type="number"
-                  onChange={(e) => setAnimal2P0(e.target.value)}
+                  onChange={(e) => {setAnimal2P0(e.target.value);setAnimal2P(e.target.value)}}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>

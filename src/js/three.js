@@ -12,12 +12,16 @@ import SkyLeft from '../img/corona_lf.png'
 import SkyRight from '../img/corona_rt.png'
 
 let renderer, scene, camera, cameraControl, isPlaying, animals, clock, timeSpeed, nextTime;
+let animal1Geometry, animal2Geometry, animal3Geometry, animalsMaterial;
+
 let cameraHeight = 2;
 
 class Three extends Component {
     constructor(props) {
         super(props);
         console.log(props)
+        animals = props.animals
+        isPlaying = false
         this.renderLoop = this.renderLoop.bind(this)
         this.resizeFrame = this.resizeFrame.bind(this)
         this.play = this.play.bind(this)
@@ -26,22 +30,69 @@ class Three extends Component {
         this.resetCamera = this.resetCamera.bind(this)
         this.updateScene = this.updateScene.bind(this)
         this.changeTimeSpeed = this.changeTimeSpeed.bind(this)
+        this.setUpPlayingScene = this.setUpPlayingScene.bind(this)
+        this.updateAnimalMeshCount = this.updateAnimalMeshCount.bind(this)
+        this.setAnimalRandomPosition = this.setAnimalRandomPosition.bind(this)
+        this.initializeAnimalsMeshes = this.initializeAnimalsMeshes.bind(this)
+        this.putAnimalMesh = this.putAnimalMesh.bind(this)
+        this.deleteAnimalMesh = this.deleteAnimalMesh.bind(this)
     }
-    updateScene(){
+    updateScene() {
         let time = Math.round(clock.getElapsedTime() * 10) / 10
-        if (time > nextTime){
-            console.log("time",time)
+        if (time > nextTime) {
+            console.log("time", time)
             console.log("nexTime", nextTime)
             console.log("timeSpeed", timeSpeed)
             nextTime += timeSpeed
         }
-        
+
     }
-    play(animalsIn,timeSpeedIn) {
+    initializeAnimalsMeshes() {
+        this.setUpPlayingScene()
+        animals[0].meshes = []
+        animals[1].meshes = []
+        animals[2].meshes = []
+        this.updateAnimalMeshCount(0, animals[0].p)
+        this.updateAnimalMeshCount(0, animals[1].p)
+        this.updateAnimalMeshCount(0, animals[2].p)
+
+    }
+    setUpPlayingScene() {
+        animals[0].p = animals[0].p0
+        animals[1].p = animals[1].p0
+        animals[2].p = animals[2].p0
+
+    }
+    updateAnimalMeshCount(animalIndex, thisMany) {
+        if(thisMany <0){return}
+        let difference = thisMany - animals[animalIndex].meshes.length
+        console.log(animals)
+        if (difference === 0 ) { return }
+        if (difference > 0) { //Add animals
+            for (var i = 0; i < difference; i++) {
+                this.putAnimalMesh(animalIndex)
+            }
+        } else if (difference < 0) { //Kill animals
+            for (var i = difference; i < 0; i++) {
+                this.deleteAnimalMesh(animalIndex)
+            }
+        }
+    }
+    putAnimalMesh(animalIndex) {
+
+    }
+    deleteAnimalMesh(animalIndex) {
+
+    }
+    setAnimalRandomPosition(mesh) {
+
+    }
+    play(animalsIn, timeSpeedIn) {
         animals = animalsIn
         timeSpeed = timeSpeedIn
         nextTime = timeSpeedIn
         console.log("is playing")
+        this.setUpPlayingScene()
         clock = new THREE.Clock()
         isPlaying = true
     }
@@ -63,16 +114,15 @@ class Three extends Component {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
     }
-    changeTimeSpeed(value){
+    changeTimeSpeed(value) {
         console.log("changinTime:", value)
         timeSpeed = value
     }
     renderLoop() {
-        // stats.begin();
         if (isPlaying) {
             this.updateScene()
         }
-        renderer.render(scene, camera); // DRAW SCENE
+        renderer.render(scene, camera);
         requestAnimationFrame(this.renderLoop);
     }
 
@@ -141,12 +191,23 @@ class Three extends Component {
         leftWall.position.set(floorWidth / 2 * -1, lWallHeight / 2 - floorHeight / 2, 0);
         leftWall.rotation.y = Math.PI / 2
         // let worldAxes = new THREE.AxesHelper(10);
+        //Animals material
+        animalsMaterial = new THREE.MeshLambertMaterial({ color: 0xaaaaaa, wireframe: false });
+        //Animal1  Geometry
+        animal1Geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3)
+        //Animal2  Geometry
+        animal2Geometry = new THREE.ConeGeometry(0.15, 0.3, 20);
+        //Animal3  Geometry
+        animal3Geometry = new THREE.CylinderGeometry(0.15, 0.15, 0.3, 20);
+
+        //Adding Scene Objects
         scene.add(floor)
         scene.add(rightWall)
         scene.add(leftWall)
-        // scene.add(worldAxes);
-        isPlaying = false
 
+        this.initializeAnimalsMeshes()
+        // scene.add(worldAxes);
+        // isPlaying = false
         this.renderLoop();
 
         window.addEventListener("resize", this.resizeFrame);
@@ -160,16 +221,16 @@ export default Three;
 // EVENT LISTENERS & HANDLERS
 // document.addEventListener("DOMContentLoaded", init);
 
-class Floor extends THREE.Mesh {
-    constructor() {
-        super();
-        console.log("ehheheh")
-        this.geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
-        this.material = new THREE.MeshBasicMaterial();
-        this.rotation.x = -0.5 * Math.PI;
-        this.wireframeHelper = new THREE.LineSegments(new THREE.WireframeGeometry(this.geometry));
-        this.wireframeHelper.material.color = new THREE.Color(0.2, 0.2, 0.2);
-        this.add(this.wireframeHelper);
-        this.visible = true;
-    }
-}
+// class Floor extends THREE.Mesh {
+//     constructor() {
+//         super();
+//         console.log("ehheheh")
+//         this.geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
+//         this.material = new THREE.MeshBasicMaterial();
+//         this.rotation.x = -0.5 * Math.PI;
+//         this.wireframeHelper = new THREE.LineSegments(new THREE.WireframeGeometry(this.geometry));
+//         this.wireframeHelper.material.color = new THREE.Color(0.2, 0.2, 0.2);
+//         this.add(this.wireframeHelper);
+//         this.visible = true;
+//     }
+// }
