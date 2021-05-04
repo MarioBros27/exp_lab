@@ -168,15 +168,7 @@ export default function App() {
   const [animal2P0, setAnimal2P0] = useState(0)
   const [animal2Pn, setAnimal2Pn] = useState(0)
   const [animal2Pn1, setAnimal2Pn1] = useState(0)
-  animals[0]['p0'] = animal0P0
-  animals[1]['p0'] = animal1P0
-  animals[2]['p0'] = animal2P0
-  animals[0]['pn'] = animal0Pn
-  animals[1]['pn'] = animal1Pn
-  animals[2]['pn'] = animal2Pn
-  animals[0]['pn1'] = animal0Pn1
-  animals[1]['pn1'] = animal1Pn1
-  animals[2]['pn1'] = animal2Pn1
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -204,22 +196,27 @@ export default function App() {
       console.log(time)
     }
   }
-  const handleTextChange = (id, property, value) => {
-    console.log(id)
-    console.log(property)
-    console.log(value)
-    // let animal = animals.find(x => x.id === id);
-    // animal[property] = value
-    // console.log(animal[property].value)
-    // if(id ===0){
-    //   animal
-    // }else if(id ===1){
 
-    // }else if(id ===2)
-    
-  }
-  const validateInput = ()=>{
-    
+  const validateInput = () => {
+    let inputs = [animal0P0, animal0Pn, animal0Pn1, animal1P0, animal1Pn, animal1Pn1, animal2P0, animal2Pn, animal2Pn1]
+    let ok = true
+    for (var i = 0; i < inputs.length; i++) {
+      if (inputs[i].toString() === '') {
+        alert("no puede dejar espacio vacio, puede dejar 0 si no quiere hacer uso")
+        ok = false
+        return false
+      } else if (inputs[i] % 1 !== 0) {
+        alert("no puede poner animales no enteros")
+        ok = false
+        return false
+      } else if (inputs[i] < 0) {
+        alert("no puede poner numeros negativos")
+        ok = false
+        return false
+      }
+    }
+
+    return true
   }
   return (
     <ThemeProvider theme={theme}>
@@ -246,15 +243,14 @@ export default function App() {
 
             <IconButton
               disabled={play}
-              onClick={() => { 
-
-                setPauseStop(false); 
-                setPlay(true);
-                // if(validateInput){
-                //   childRef.current.play(); 
-                // }else{
-                //   alert("no debe de dejar espacio vacio, puede dejar 0 si no quiere hacer uso")
-                // }
+              onClick={() => {
+                const ok = validateInput()
+                console.log(ok)
+                if (ok) {
+                  setPauseStop(false);
+                  setPlay(true);
+                  childRef.current.play();
+                }
               }}
             >
               < PlayArrowIcon color='secondary' fontSize='large' />
@@ -322,60 +318,144 @@ export default function App() {
           <Divider />
 
           <List key={0} dense>
-            {animals.map(animal => {
-              return (
-                <>
-                  <ListItem dense key={animal.id + 100}>
-                    <Typography variant="h6">
-                      {animal.name}
-                    </Typography>
-                  </ListItem>
-                  {/* <ListItemText primary={animal.name}/> */}
-                  <ListItem dense key={animal.id}>
-                    <FormControl fullWidth variant="outlined">
-                      <OutlinedInput
-                        id={animal.name}
-                        value={animal['p0']}
-                        margin="dense"
-                        // value={values.amount}
-                        onChange={(e) => handleTextChange(animal.id, 'po', e.target.value)}
-                        startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
-                      // labelWidth={60}
-                      />
+            {/*Animal0*/}
+            <ListItem dense key={0}>
+              <Typography variant="h6">
+                {animals[0].name}
+              </Typography>
+            </ListItem>
 
-                    </FormControl>
+            <ListItem dense key={1}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[0].name}
+                  value={animal0P0}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal0P0(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
 
-                  </ListItem>
-                  <ListItem dense>
-                    <FormControl fullWidth variant="outlined">
-                      <OutlinedInput
-                        id={animal.name + "pn"}
-                        value={animal['pn']}
-                        margin="dense"
-                        // value={values.amount}
-                        onChange={(e) => handleTextChange(animal.id, 'pn', e.target.value)}
-                        startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
-                      // labelWidth={60}
-                      />
-                    </FormControl>
-                  </ListItem>
-                  <ListItem dense>
-                    <FormControl fullWidth variant="outlined">
-                      <OutlinedInput
-                        id={animal.name + "Pn-1"}
-                        value={animal['pn1']}
-                        margin="dense"
-                        // value={values.amount}
-                        onChange={(e) => handleTextChange(animal.id, 'pn1', e.target.value)}
-                        startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
-                      // labelWidth={60}
-                      />
-                    </FormControl>
-                  </ListItem>
-                  <Divider />
-                </>
-              )
-            })}
+            <ListItem dense key={2}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[0].name + "pn"}
+                  value={animal0Pn}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal0Pn(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+
+            <ListItem dense key={3}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[0].name + "Pn-1"}
+                  value={animal0Pn1}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal0Pn1(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+            <Divider />
+            {/*Animal1*/}
+            <ListItem dense key={4}>
+              <Typography variant="h6">
+                {animals[1].name}
+              </Typography>
+            </ListItem>
+
+            <ListItem dense key={5}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[1].name}
+                  value={animal1P0}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal1P0(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+
+            <ListItem dense key={6}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[1].name + "pn"}
+                  value={animal1Pn}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal1Pn(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+
+            <ListItem dense key={7}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[1].name + "Pn-1"}
+                  value={animal1Pn1}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal1Pn1(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+            <Divider />
+            {/*Animal2*/}
+            <ListItem dense key={8}>
+              <Typography variant="h6">
+                {animals[2].name}
+              </Typography>
+            </ListItem>
+
+            <ListItem dense key={9}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[2].name}
+                  value={animal2P0}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal2P0(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+
+            <ListItem dense key={10}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[2].name + "pn"}
+                  value={animal2Pn}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal2Pn(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+
+            <ListItem dense key={11}>
+              <FormControl fullWidth variant="outlined">
+                <OutlinedInput
+                  id={animals[2].name + "Pn-1"}
+                  value={animal2Pn1}
+                  margin="dense"
+                  type="number"
+                  onChange={(e) => setAnimal2Pn1(e.target.value)}
+                  startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
+                />
+              </FormControl>
+            </ListItem>
+            <Divider />
           </List>
         </Drawer>
 
