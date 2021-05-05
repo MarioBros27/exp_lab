@@ -137,7 +137,8 @@ export default function App() {
   const classes = useStyles();
   // const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [pauseStopDisabled, setPauseStopDisabled] = useState(true)
+  const [pauseDisabled, setPauseDisabled] = useState(true)
+  const [stopDisabled, setStopDisabled] = useState(true)
   const [playDisabled, setPlayDisabled] = useState(false)
   const childRef = useRef();
   const [animal0P, setAnimal0P] = useState(animals[0].p0)
@@ -179,9 +180,8 @@ export default function App() {
     if (time !== value) {
       // setTime(value)
       time = value
-      console.log(time)
+      // console.log(time)
       if (playDisabled) {
-        console.log("fuck you")
         childRef.current.changeTimeSpeed(value)
       }
     }
@@ -238,26 +238,42 @@ export default function App() {
             <IconButton
               disabled={playDisabled}
               onClick={() => {
-                const ok = validateInput()
-                // console.log(ok)
-                if (ok) {
-                  setPauseStopDisabled(false);
-                  setPlayDisabled(true);
-                  childRef.current.play(animals, time);
+                if (pauseDisabled && !stopDisabled) {//Resume
+                  // console.log("resume")
+                  setPauseDisabled(false)
+                  childRef.current.resume();
+                } else {//Play
+                  const ok = validateInput()
+                  // console.log(ok)
+                  if (ok) {
+                    setPauseDisabled(false);
+                    setStopDisabled(false);
+                    setPlayDisabled(true);
+                    childRef.current.play(animals, time);
+                  }
                 }
               }}
             >
               < PlayArrowIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              disabled={pauseStopDisabled}
-              onClick={() => { childRef.current.pause(); if (playDisabled) { setPlayDisabled(false) } }}
+              disabled={pauseDisabled}
+              onClick={() => {
+                childRef.current.pause();
+                if (playDisabled) { setPlayDisabled(false) }
+                setPauseDisabled(true)
+              }}
             >
               < PauseIcon color='secondary' fontSize='large' />
             </IconButton>
             <IconButton
-              disabled={pauseStopDisabled}
-              onClick={() => { childRef.current.stop(); setPauseStopDisabled(true); setPlayDisabled(false) }}
+              disabled={stopDisabled}
+              onClick={() => {
+                childRef.current.stop();
+                setPauseDisabled(true);
+                setStopDisabled(true);
+                setPlayDisabled(false)
+              }}
             >
               < StopIcon color='secondary' fontSize='large' />
             </IconButton>
@@ -467,7 +483,7 @@ export default function App() {
         <div className={classes.toolbar} /> 
         <Three ref={childRef} width={width} />
       </main> */}
-       
+
       </div>
     </ThemeProvider >
   );

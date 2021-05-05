@@ -13,10 +13,12 @@ import SkyRight from '../img/corona_rt.png'
 
 let renderer, scene, camera, cameraControl, isPlaying, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
-let floorWidth, floorOffset, T0, T1, T2
+let floorWidth, floorOffset
 let cameraHeight = 2;
 let years = 0
 let setAnimalLbl, setYearsLbl
+let timeWhenPaused = 0
+let timeLost = 0
 
 class Three extends Component {
     constructor(props) {
@@ -30,6 +32,7 @@ class Three extends Component {
         this.play = this.play.bind(this)
         this.pause = this.pause.bind(this)
         this.stop = this.stop.bind(this)
+        this.resume = this.resume.bind(this)
         this.resetCamera = this.resetCamera.bind(this)
         this.updateScene = this.updateScene.bind(this)
         this.changeTimeSpeed = this.changeTimeSpeed.bind(this)
@@ -41,12 +44,13 @@ class Three extends Component {
         this.deleteAnimalMesh = this.deleteAnimalMesh.bind(this)
     }
     updateScene() {
-        let time = Math.round(clock.getElapsedTime() * 10) / 10
+        let time = Math.round((clock.getElapsedTime() -timeLost) * 10) / 10
         //If it is a new year
         if (time > nextTime) {
+            // console.log("timespeed", timeSpeed)
             //TODO everything goes here
             years+=1
-            console.log("year",years)
+            // console.log("year",years)
             animals.forEach((animal, index) => {
                 // console.log(animal)
                 let newP = Math.floor(animal.p0*Math.pow(animal.t + 1,years))
@@ -140,11 +144,27 @@ class Three extends Component {
     }
     pause() {
         //console.log("is paused")
+        timeWhenPaused = clock.getElapsedTime()
         isPlaying = false
+    }
+    resume(){
+        timeLost += clock.getElapsedTime() - timeWhenPaused
+        isPlaying = true
     }
     stop() {
         //console.log("is stopped")
         isPlaying = false
+        this.updateAnimalMeshCount(0,animals[0].p0)
+        this.updateAnimalMeshCount(1,animals[1].p0)
+        this.updateAnimalMeshCount(2,animals[2].p0)
+        setAnimalLbl[0](animals[0].p0)
+        setAnimalLbl[1](animals[1].p0)
+        setAnimalLbl[2](animals[2].p0)
+        timeLost = 0
+        timeWhenPaused = 0
+        years = 0
+        setYearsLbl(years)
+        clock.stop()
     }
     resetCamera() {
         camera.position.set(3, cameraHeight, 3);
@@ -243,6 +263,7 @@ class Three extends Component {
         animal1Geometry = new THREE.ConeGeometry(0.05, 0.05, 20);
         //Animal2  Geometry
         animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
+        
         //Adding Scene Objects
         scene.add(floor)
         scene.add(rightWall)
