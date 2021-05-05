@@ -31,6 +31,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+// import Grid from '@material-ui/core/Grid';
 
 const drawerWidth = 180;
 
@@ -109,7 +110,7 @@ const animals = [{
   p0: 2,
   pn: 4,
   pn1: 3,
-  p:0
+  p: 0
 },
 {
   id: 1,
@@ -117,7 +118,7 @@ const animals = [{
   p0: 2,
   pn: 4,
   pn1: 3,
-  p:0
+  p: 0
 },
 {
   id: 2,
@@ -125,7 +126,7 @@ const animals = [{
   p0: 2,
   pn: 4,
   pn1: 3,
-  p:0
+  p: 0
 }
 
 ]
@@ -189,6 +190,10 @@ export default function App() {
   const validateInput = () => {
     let inputs = [animal0P0, animal0Pn, animal0Pn1, animal1P0, animal1Pn, animal1Pn1, animal2P0, animal2Pn, animal2Pn1]
     let ok = true
+    if (animal0Pn < animal0Pn1 || animal1Pn < animal1Pn1 || animal2Pn < animal2Pn1) {
+      alert("La población de este año no puede ser menor a la del anterior ya que este programa no simula decrecimientos")
+      return false
+    }
     for (var i = 0; i < inputs.length; i++) {
       if (inputs[i].toString() === '') {
         alert("no puede dejar espacio vacio, puede dejar 0 si no quiere hacer uso")
@@ -211,7 +216,7 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <CssBaseline />
-        <Three ref={childRef} animals={animals} setYears={setYears}setAnimal0P={setAnimal0P} setAnimal1P={setAnimal1P}setAnimal2P={setAnimal2P}  />
+        <Three ref={childRef} animals={animals} setYears={setYears} setAnimal0P={setAnimal0P} setAnimal1P={setAnimal1P} setAnimal2P={setAnimal2P} />
         <AppBar
           position="fixed"
           className={clsx(classes.appBar, {
@@ -263,12 +268,12 @@ export default function App() {
               {`${animals[0].name}s:`} {animal0P}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-            {`${animals[1].name}s:`} {animal1P}
+              {`${animals[1].name}s:`} {animal1P}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-            {`${animals[2].name}s:`} {animal2P}
+              {`${animals[2].name}s:`} {animal2P}
             </Typography>
-            <Button variant="contained" color='secondary' onClick={() => { childRef.current.resetCamera() }}>Home</Button>
+            <Button variant="contained" color='secondary' onClick={() => { childRef.current.resetCamera() }}>Camara Home</Button>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -291,7 +296,7 @@ export default function App() {
           <Divider />
           <div className={classes.slider}>
             <Typography gutterBottom>
-              1 año es en segundos:
+              Velocidad:
             </Typography>
             <Slider
               key={`slider-${time}`}
@@ -322,8 +327,8 @@ export default function App() {
                   value={animal0P0}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
-                  onChange={(e) => {setAnimal0P0(e.target.value);setAnimal0P(e.target.value);childRef.current.updateAnimalMeshCount(0,e.target.value)}}
+                  inputProps={{ min: min, max: max }}
+                  onChange={(e) => { setAnimal0P0(e.target.value); setAnimal0P(e.target.value); childRef.current.updateAnimalMeshCount(0, e.target.value) }}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>
@@ -336,7 +341,7 @@ export default function App() {
                   value={animal0Pn}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
+                  inputProps={{ min: min, max: max }}
                   onChange={(e) => setAnimal0Pn(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
                 />
@@ -350,7 +355,7 @@ export default function App() {
                   value={animal0Pn1}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
+                  inputProps={{ min: min, max: max }}
                   onChange={(e) => setAnimal0Pn1(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
                 />
@@ -371,8 +376,8 @@ export default function App() {
                   value={animal1P0}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
-                  onChange={(e) => {setAnimal1P0(e.target.value);setAnimal1P(e.target.value);childRef.current.updateAnimalMeshCount(1,e.target.value)}}
+                  inputProps={{ min: min, max: max }}
+                  onChange={(e) => { setAnimal1P0(e.target.value); setAnimal1P(e.target.value); childRef.current.updateAnimalMeshCount(1, e.target.value) }}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>
@@ -385,7 +390,7 @@ export default function App() {
                   value={animal1Pn}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
+                  inputProps={{ min: min, max: max }}
                   onChange={(e) => setAnimal1Pn(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
                 />
@@ -399,7 +404,7 @@ export default function App() {
                   value={animal1Pn1}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
+                  inputProps={{ min: min, max: max }}
                   onChange={(e) => setAnimal1Pn1(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
                 />
@@ -420,8 +425,8 @@ export default function App() {
                   value={animal2P0}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
-                  onChange={(e) => {setAnimal2P0(e.target.value);setAnimal2P(e.target.value);childRef.current.updateAnimalMeshCount(2,e.target.value)}}
+                  inputProps={{ min: min, max: max }}
+                  onChange={(e) => { setAnimal2P0(e.target.value); setAnimal2P(e.target.value); childRef.current.updateAnimalMeshCount(2, e.target.value) }}
                   startAdornment={<InputAdornment position="start">Po=</InputAdornment>}
                 />
               </FormControl>
@@ -434,7 +439,7 @@ export default function App() {
                   value={animal2Pn}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
+                  inputProps={{ min: min, max: max }}
                   onChange={(e) => setAnimal2Pn(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn=</InputAdornment>}
                 />
@@ -448,7 +453,7 @@ export default function App() {
                   value={animal2Pn1}
                   margin="dense"
                   type="number"
-                  inputProps={{ min: min, max: max} }
+                  inputProps={{ min: min, max: max }}
                   onChange={(e) => setAnimal2Pn1(e.target.value)}
                   startAdornment={<InputAdornment position="start">Pn-1=</InputAdornment>}
                 />
@@ -462,6 +467,7 @@ export default function App() {
         <div className={classes.toolbar} /> 
         <Three ref={childRef} width={width} />
       </main> */}
+       
       </div>
     </ThemeProvider >
   );
