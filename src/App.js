@@ -107,24 +107,24 @@ const animals = [{
   id: 0,
   name: "Gato",
   p0: 2,
-  pn: 3,
-  pn1: 4,
+  pn: 4,
+  pn1: 3,
   p:0
 },
 {
   id: 1,
   name: "Perro",
   p0: 2,
-  pn: 3,
-  pn1: 4,
+  pn: 4,
+  pn1: 3,
   p:0
 },
 {
   id: 2,
   name: "Conejo",
   p0: 2,
-  pn: 3,
-  pn1: 4,
+  pn: 4,
+  pn1: 3,
   p:0
 }
 
@@ -211,7 +211,7 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <CssBaseline />
-        <Three ref={childRef} animals={animals} />
+        <Three ref={childRef} animals={animals} setYears={setYears}setAnimal0P={setAnimal0P} setAnimal1P={setAnimal1P}setAnimal2P={setAnimal2P}  />
         <AppBar
           position="fixed"
           className={clsx(classes.appBar, {
@@ -234,7 +234,7 @@ export default function App() {
               disabled={playDisabled}
               onClick={() => {
                 const ok = validateInput()
-                console.log(ok)
+                // console.log(ok)
                 if (ok) {
                   setPauseStopDisabled(false);
                   setPlayDisabled(true);
