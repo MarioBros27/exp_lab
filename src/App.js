@@ -327,7 +327,7 @@ export default function App() {
           }}
         >
           <div className={classes.drawerHeader}>
-            <IconButton onClick={() => { setShowInfo(true) }}>
+            <IconButton onClick={() => { if (pauseDisabled) { setShowInfo(true) } }}>
               <InfoSharpIcon fontSize="large" />Ayuda
             </IconButton>
             <IconButton onClick={handleDrawerClose}>
@@ -510,10 +510,12 @@ export default function App() {
       </main> */}
         <Dialog classes={{ paper: classes.dialogPaper }} aria-labelledby="customized-dialog-title" open={showInfo}>
           <DialogTitle>
+            <Typography variant="h4">¡Bienvenido!</Typography>
             <IconButton aria-label="close" className={classes.closeButton} onClick={() => { setShowInfo(false) }}>
               <CloseIcon />
             </IconButton>
           </DialogTitle>
+
           <DialogContent >
             <Grid container direction="row">
               <Grid item xs={6}>
@@ -526,46 +528,48 @@ export default function App() {
                   </Box>
                 </Grid>
                 <Typography gutterBottom>
-                  Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                  in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-          </Typography>
+                  Po = Población inicial<br />
+                  T = Tasa de crecimiento<br />
+                  t = Tiempo en años<br />
+                </Typography>
                 <Grid container>
                   <Box>
                     <img style={{ width: "90%" }} src={Formula2} />
 
                   </Box>
                 </Grid>
-
-
-
-
                 <Typography gutterBottom>
-                  Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                  lacus vel augue laoreet rutrum faucibus dolor auctor.
-          </Typography>
+                  Pn = Población de un año<br />
+                  Pn-1 = Población de un año anterior al de Pn
+                </Typography>
+                <Typography variant="subtitle1" color="secondary">
+                  <strong>Restricciones:</strong>
+                </Typography>
                 <Typography gutterBottom>
-                  Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                  scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                  auctor fringilla.
-          </Typography>
+                  {"Pn > 0 y Pn-1 > 0 ; Pn > Pn-1"}<br />
+                  {"t < 100 años"}<br />
+                </Typography>
               </Grid>
               {/* <Divider flexItem style={{ marginLeft: "-5px",marginRight:"5px" }} orientation="vertical"/> */}
 
               <Grid item xs={6}>
-                <Typography align="center" variant="h5" gutterBottom>Aplicación</Typography>
+                <Typography align="center" variant="h5" gutterBottom>Como usar la aplicación</Typography>
                 <Typography gutterBottom>
-                  Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                  in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+                  1. Modifica las variables y la velocidad del paso de los años(1 año = n segundos)<br />
+                  2. Selecciona el botón Play. Puedes cerrar la barra de configuración si quieres.
+                  3. En este estado puedes: <br />
+                  {"    a. Pausar: detiene momentariamente."} <br />
+                  {"    b. Reaundar(play): continua la simulación."} <br />
+                  {"    c. Detener: termina la simulación y se limpia la pantalla"} <br /> </Typography>
+                <Typography gutterBottom>
+                  Si no quieres usar más de un animal, deja los campos de Po en 0
           </Typography>
                 <Typography gutterBottom>
-                  Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                  lacus vel augue laoreet rutrum faucibus dolor auctor.
+                  El botón de CAMARA HOME es para que en la configuración del ambiente puedas explorar con el ratón, y si necesitas regresar a la posición inicial de la cámara este te devuelve
           </Typography>
                 <Typography gutterBottom>
-                  Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                  scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                  auctor fringilla.
-          </Typography>
+                  Esta ventana la puedes volver a ver en Ayuda que está arriba en la barra lateral siempre y cuando no esté corriendo la simulación.
+                </Typography>
               </Grid>
             </Grid>
 
