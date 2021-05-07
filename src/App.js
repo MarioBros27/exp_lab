@@ -36,6 +36,9 @@ import Grid from '@material-ui/core/Grid';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Formula1 from '../src/img/formula1.png'
+import Formula2 from '../src/img/formula2.png'
+import Box from '@material-ui/core/Box';
 
 const drawerWidth = 180;
 
@@ -113,10 +116,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.grey[500],
   },
   dialogPaper: {
-    minHeight: '80vh',
-    maxHeight: '80vh',
-    minWidth: '120vh',
-    maxWidth: '120vh',
+    minHeight: '85vh',
+    maxHeight: '85vh',
+    minWidth: '140vh',
+    maxWidth: '140vh',
   },
 }));
 const DialogContent = withStyles((theme) => ({
@@ -514,12 +517,28 @@ export default function App() {
           <DialogContent >
             <Grid container direction="row">
               <Grid item xs={6}>
-              <Typography align="center"variant="h5" gutterBottom>Matemáticas</Typography>
+                <Typography align="center" variant="h5" gutterBottom>Matemáticas</Typography>
 
+                <Grid container>
+                  <Box>
+                    <img style={{ width: "95%" }} src={Formula1} />
+
+                  </Box>
+                </Grid>
                 <Typography gutterBottom>
                   Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
                   in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
           </Typography>
+                <Grid container>
+                  <Box>
+                    <img style={{ width: "90%" }} src={Formula2} />
+
+                  </Box>
+                </Grid>
+
+
+
+
                 <Typography gutterBottom>
                   Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
                   lacus vel augue laoreet rutrum faucibus dolor auctor.
@@ -533,7 +552,7 @@ export default function App() {
               {/* <Divider flexItem style={{ marginLeft: "-5px",marginRight:"5px" }} orientation="vertical"/> */}
 
               <Grid item xs={6}>
-                <Typography align="center"variant="h5" gutterBottom>Aplicación</Typography>
+                <Typography align="center" variant="h5" gutterBottom>Aplicación</Typography>
                 <Typography gutterBottom>
                   Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
                   in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
