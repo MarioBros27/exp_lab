@@ -20,18 +20,22 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import PauseIcon from '@material-ui/icons/Pause';
 import StopIcon from '@material-ui/icons/Stop';
+import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
 import { green } from '@material-ui/core/colors';
 import ListItemText from '@material-ui/core/ListItemText';
 import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button'
-
+import { withStyles } from '@material-ui/core/styles';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
-// import Grid from '@material-ui/core/Grid';
+import Grid from '@material-ui/core/Grid';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const drawerWidth = 180;
 
@@ -101,8 +105,25 @@ const useStyles = makeStyles((theme) => ({
   },
   years: {
     marginRight: "20px"
-  }
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  dialogPaper: {
+    minHeight: '80vh',
+    maxHeight: '80vh',
+    minWidth: '120vh',
+    maxWidth: '120vh',
+  },
 }));
+const DialogContent = withStyles((theme) => ({
+  root: {
+
+  },
+}))(MuiDialogContent);
 
 const animals = [{
   id: 0,
@@ -140,6 +161,7 @@ export default function App() {
   const [pauseDisabled, setPauseDisabled] = useState(true)
   const [stopDisabled, setStopDisabled] = useState(true)
   const [playDisabled, setPlayDisabled] = useState(false)
+  const [showInfo, setShowInfo] = useState(true)
   const childRef = useRef();
   const [animal0P, setAnimal0P] = useState(animals[0].p0)
   const [animal0P0, setAnimal0P0] = useState(animals[0].p0)
@@ -302,7 +324,7 @@ export default function App() {
           }}
         >
           <div className={classes.drawerHeader}>
-            <IconButton >
+            <IconButton onClick={() => { setShowInfo(true) }}>
               <InfoSharpIcon fontSize="large" />Ayuda
             </IconButton>
             <IconButton onClick={handleDrawerClose}>
@@ -483,8 +505,56 @@ export default function App() {
         <div className={classes.toolbar} /> 
         <Three ref={childRef} width={width} />
       </main> */}
+        <Dialog classes={{ paper: classes.dialogPaper }} aria-labelledby="customized-dialog-title" open={showInfo}>
+          <DialogTitle>
+            <IconButton aria-label="close" className={classes.closeButton} onClick={() => { setShowInfo(false) }}>
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent >
+            <Grid container direction="row">
+              <Grid item xs={6}>
+              <Typography align="center"variant="h5" gutterBottom>Matemáticas</Typography>
 
+                <Typography gutterBottom>
+                  Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
+                  in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+          </Typography>
+                <Typography gutterBottom>
+                  Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
+                  lacus vel augue laoreet rutrum faucibus dolor auctor.
+          </Typography>
+                <Typography gutterBottom>
+                  Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
+                  scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
+                  auctor fringilla.
+          </Typography>
+              </Grid>
+              {/* <Divider flexItem style={{ marginLeft: "-5px",marginRight:"5px" }} orientation="vertical"/> */}
+
+              <Grid item xs={6}>
+                <Typography align="center"variant="h5" gutterBottom>Aplicación</Typography>
+                <Typography gutterBottom>
+                  Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
+                  in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+          </Typography>
+                <Typography gutterBottom>
+                  Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
+                  lacus vel augue laoreet rutrum faucibus dolor auctor.
+          </Typography>
+                <Typography gutterBottom>
+                  Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
+                  scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
+                  auctor fringilla.
+          </Typography>
+              </Grid>
+            </Grid>
+
+          </DialogContent>
+
+        </Dialog>
       </div>
+
     </ThemeProvider >
   );
 }
