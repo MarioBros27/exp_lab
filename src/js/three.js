@@ -11,16 +11,17 @@ import SkyDown from '../img/corona_dn.png'
 import SkyLeft from '../img/corona_lf.png'
 import SkyRight from '../img/corona_rt.png'
 
-let renderer, scene, camera, cameraControl, isPlaying, animals, clock, timeSpeed, nextTime;
+let renderer, scene, camera, cameraControl, isPlaying, isPaused, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
 let animal0Material, animal1Material, animal2Material;
-
-let floorWidth, floorOffset
+let maxWidthOfObject = 0.1
+let floorWidth, floorHeightOffset
 let cameraHeight = 2;
 let years = 0
 let setAnimalLbl, setYearsLbl
 let timeWhenPaused = 0
 let timeLost = 0
+let handleStop;
 
 class Three extends Component {
     constructor(props) {
@@ -28,7 +29,9 @@ class Three extends Component {
         animals = props.animals
         setAnimalLbl = [props.setAnimal0P, props.setAnimal1P, props.setAnimal2P]
         setYearsLbl = props.setYears
+        handleStop = props.handleStop
         isPlaying = false
+        isPaused = false
         this.renderLoop = this.renderLoop.bind(this)
         this.resizeFrame = this.resizeFrame.bind(this)
         this.play = this.play.bind(this)
@@ -44,6 +47,7 @@ class Three extends Component {
         this.initializeAnimalsMeshes = this.initializeAnimalsMeshes.bind(this)
         this.putAnimalMesh = this.putAnimalMesh.bind(this)
         this.deleteAnimalMesh = this.deleteAnimalMesh.bind(this)
+        this.updateP0 = this.updateP0.bind(this)
     }
     updateScene() {
         let time = Math.round((clock.getElapsedTime() - timeLost) * 10) / 10
@@ -51,15 +55,18 @@ class Three extends Component {
         if (time > nextTime) {
             // console.log("timespeed", timeSpeed)
             //TODO everything goes here
+            if (time > nextTime + timeSpeed) {//IF objects haven't been added to the scene in time stop
+                this.stop()
+            }
             years += 1
             // console.log("year",years)
             animals.forEach((animal, index) => {
                 // console.log(animal)
                 let newP = Math.floor(animal.p0 * Math.pow(animal.t + 1, years))
+                animal.p = newP
                 //Add animals to the scene
                 this.updateAnimalMeshCount(index, newP)
-                //Change label with how many there are
-                setAnimalLbl[index](newP)
+                
             })
             setYearsLbl(years)
             nextTime += timeSpeed
@@ -84,8 +91,11 @@ class Three extends Component {
 
     }
     updateAnimalMeshCount(animalIndex, thisMany) {
-        if (thisMany < 0) { return }
+        if (thisMany <= 0) { return }
         let difference = thisMany - animals[animalIndex].meshes.length
+        // console.log(animals[animalIndex].meshes.length)
+        // let difference = thisMany = animals[animalIndex].p
+        console.log(`For animal ${animalIndex}: ${thisMany}`)
         //console.log(animals)
         if (difference === 0) { return }
         var i
@@ -100,9 +110,18 @@ class Three extends Component {
                 this.deleteAnimalMesh(animalIndex)
             }
         }
+        //Change label with how many there are
+        setAnimalLbl[animalIndex](thisMany)
     }
     putAnimalMesh(animalIndex) {
         let mesh;
+        if (isPlaying) {
+            let time = Math.round((clock.getElapsedTime() - timeLost) * 10) / 10
+            if (time > nextTime + timeSpeed) {//IF objects haven't been added to the scene in time stop
+                this.stop()
+            }
+        }
+
         if (animalIndex === 0) {
             mesh = new THREE.Mesh(animal0Geometry, animal0Material)
             animals[0].meshes.push(mesh)
@@ -117,27 +136,29 @@ class Three extends Component {
 
     }
     deleteAnimalMesh(animalIndex) {
+        // console.log(animals[animalIndex].meshes.length)
         const animal = animals[animalIndex].meshes.pop()
+        // console.log(animals[animalIndex].meshes.length)
         scene.remove(animal)
     }
     setAnimalRandomPosition(mesh) {
         //TODO consider the model width that could exeed the border
         let randomX = Math.random() * floorWidth / 2
         if (Math.random() > 0.5) { //Negative x
-            randomX = randomX * -1 + 0.05 //.05 is the width of the object
+            randomX = randomX * -1 + maxWidthOfObject
         } else {//Positive x
-            randomX = randomX - 0.05 //.05 is the width of the object
+            randomX = randomX - maxWidthOfObject
         }
         //console.log(randomX)
         let randomZ = Math.random() * floorWidth / 2
         if (Math.random() > 0.5) { //Negative Z
-            randomZ = randomZ * -1 //.05 is the width of the object
+            randomZ = randomZ * -1 + maxWidthOfObject
         } else {//Positive Z
-            randomZ = randomZ - 0.05//.05 is the width of the object
+            randomZ = randomZ - maxWidthOfObject
         }
         //console.log(randomZ)
         //console.log(mesh)
-        mesh.position.set(randomX, floorOffset + mesh.geometry.parameters.height / 2, randomZ)
+        mesh.position.set(randomX, floorHeightOffset + mesh.geometry.parameters.height / 2, randomZ)
         scene.add(mesh)
     }
     play(animalsIn, timeSpeedIn) {
@@ -149,26 +170,62 @@ class Three extends Component {
         // console.log(animals)
         this.setUpPlayingScene()
         clock = new THREE.Clock()
+        isPaused = false
         isPlaying = true
     }
     pause() {
         //console.log("is paused")
+        isPaused = true
         timeWhenPaused = clock.getElapsedTime()
         isPlaying = false
     }
     resume() {
         timeLost += clock.getElapsedTime() - timeWhenPaused
+        isPaused = false
         isPlaying = true
     }
     stop() {
         //console.log("is stopped")
+        isPaused = false
         isPlaying = false
-        this.updateAnimalMeshCount(0, animals[0].p0)
-        this.updateAnimalMeshCount(1, animals[1].p0)
-        this.updateAnimalMeshCount(2, animals[2].p0)
+        handleStop()
+        console.log(animals)
         setAnimalLbl[0](animals[0].p0)
         setAnimalLbl[1](animals[1].p0)
         setAnimalLbl[2](animals[2].p0)
+        // console.log(animals[0].meshes.length)
+        // this.updateAnimalMeshCount(0, animals[0].p0)
+        // console.log(animals[0].meshes.length)
+        // console.log("L")
+        // console.log(animals[1].meshes.length)
+        // this.updateAnimalMeshCount(1, animals[1].p0)
+        // console.log(animals[1].meshes.length)
+        // console.log("L")
+        // console.log(animals[2].meshes.length)
+        // this.updateAnimalMeshCount(2, animals[2].p0)
+        // console.log(animals[2].meshes.length)
+        // for(var i = 0; i<3; i++){
+        //     console.log("I",i)
+        //     console.log(animals[i].meshes.length)
+        //     while(animals[1].p0 !==animals[1].meshes.length){
+        //         console.log("updateing:",i)
+        //         this.updateAnimalMeshCount(1, animals[1].p0)
+        //     }
+        //     console.log(animals[i].meshes.length)
+        // }
+        // while(animals[0].p0 !==animals[0].meshes.length){
+        //     console.log("updateing 0")
+        //     this.updateAnimalMeshCount(0, animals[0].p0)
+        // }
+        // while(animals[1].p0 !==animals[1].meshes.length){
+        //     console.log("updateing 1")
+        //     this.updateAnimalMeshCount(1, animals[1].p0)
+        // }
+        // while(animals[2].p0 !==animals[2].meshes.length){
+        //     console.log("updateing 2")
+        //     this.updateAnimalMeshCount(2, animals[2].p0)
+        // }
+        console.log(animals)
         timeLost = 0
         timeWhenPaused = 0
         years = 0
@@ -189,9 +246,16 @@ class Three extends Component {
         //console.log("changinTime:", value)
         timeSpeed = value
     }
+    updateP0(index, value){
+        animals[index].p0 = value
+    }
     renderLoop() {
         if (isPlaying) {
             this.updateScene()
+        } else if(isPaused === false) {
+            this.updateAnimalMeshCount(0, animals[0].p0)
+            this.updateAnimalMeshCount(1, animals[1].p0)
+            this.updateAnimalMeshCount(2, animals[2].p0)
         }
         renderer.render(scene, camera);
         requestAnimationFrame(this.renderLoop);
@@ -239,11 +303,13 @@ class Three extends Component {
         scene.add(light);
         // MODELS
         let material = new THREE.MeshLambertMaterial({ color: 0xaaaaaa, wireframe: false });
+        // let material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: false });
+
         //Floor
         let floorDepth = 4
         floorWidth = 4
         let floorHeight = 0.4
-        floorOffset = floorHeight / 2
+        floorHeightOffset = floorHeight / 2
         let floorGeometry = new THREE.BoxGeometry(floorWidth, floorHeight, floorDepth);
         let floor = new THREE.Mesh(floorGeometry, material);
         floor.position.set(0, 0, 0);
@@ -276,6 +342,11 @@ class Three extends Component {
         //Animal2  Geometry
         animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
 
+        // const rectLight = new THREE.RectAreaLight(0xffffff, 1, floorWidth, 0.00001);
+        // rectLight.position.set(0, floorHeightOffset+0.001, 0);
+        // rectLight.lookAt(0, 1, 0);
+        // scene.add(rectLight)
+
         //Adding Scene Objects
         scene.add(floor)
         scene.add(rightWall)
@@ -291,19 +362,3 @@ class Three extends Component {
 
 }
 export default Three;
-// EVENT LISTENERS & HANDLERS
-// document.addEventListener("DOMContentLoaded", init);
-
-// class Floor extends THREE.Mesh {
-//     constructor() {
-//         super();
-//         //console.log("ehheheh")
-//         this.geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
-//         this.material = new THREE.MeshBasicMaterial();
-//         this.rotation.x = -0.5 * Math.PI;
-//         this.wireframeHelper = new THREE.LineSegments(new THREE.WireframeGeometry(this.geometry));
-//         this.wireframeHelper.material.color = new THREE.Color(0.2, 0.2, 0.2);
-//         this.add(this.wireframeHelper);
-//         this.visible = true;
-//     }
-// }
