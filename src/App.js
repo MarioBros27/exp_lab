@@ -130,7 +130,7 @@ const DialogContent = withStyles((theme) => ({
 
 const animals = [{
   id: 0,
-  name: "Gato",
+  name: "Rojo",
   p0: 2,
   pn: 4,
   pn1: 3,
@@ -138,7 +138,7 @@ const animals = [{
 },
 {
   id: 1,
-  name: "Perro",
+  name: "Azul",
   p0: 2,
   pn: 4,
   pn1: 3,
@@ -146,7 +146,7 @@ const animals = [{
 },
 {
   id: 2,
-  name: "Conejo",
+  name: "Verde",
   p0: 2,
   pn: 4,
   pn1: 3,
@@ -237,6 +237,19 @@ export default function App() {
 
     return true
   }
+  const addNewAnimalsValues = ()=>{
+    animals[0].p0 = animal0P0
+    animals[0].pn = animal0Pn
+    animals[0].pn1 = animal0Pn1
+    animals[1].p0 = animal1P0
+    animals[1].pn = animal1Pn
+    animals[1].pn1 = animal1Pn1
+    animals[2].p0 = animal2P0
+    animals[2].pn = animal2Pn
+    animals[2].pn1 = animal2Pn1
+
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
@@ -274,6 +287,8 @@ export default function App() {
                     setPauseDisabled(false);
                     setStopDisabled(false);
                     setPlayDisabled(true);
+                    //TODO add to the list of animals the new values
+                    addNewAnimalsValues();
                     childRef.current.play(animals, time);
                   }
                 }
@@ -306,13 +321,13 @@ export default function App() {
               Años: {years}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-              {`${animals[0].name}s:`} {animal0P}
+              {'Rojos:'} {animal0P}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-              {`${animals[1].name}s:`} {animal1P}
+              {'Azules:'} {animal1P}
             </Typography>
             <Typography className={classes.title} color="primary" variant="h6" noWrap>
-              {`${animals[2].name}s:`} {animal2P}
+              {'Verdes:'} {animal2P}
             </Typography>
             <Button variant="contained" color='secondary' onClick={() => { childRef.current.resetCamera() }}>Camara Home</Button>
           </Toolbar>
@@ -570,6 +585,8 @@ export default function App() {
                 <Typography gutterBottom>
                   Esta ventana la puedes volver a ver en Ayuda que está arriba en la barra lateral siempre y cuando no esté corriendo la simulación.
                 </Typography>
+                <Typography color="primary" gutterBottom>
+                  Si se te detiene antes de lo que quieres simular sube el tiempo que dura un año </Typography>
               </Grid>
             </Grid>
 

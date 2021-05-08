@@ -13,6 +13,8 @@ import SkyRight from '../img/corona_rt.png'
 
 let renderer, scene, camera, cameraControl, isPlaying, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
+let animal0Material, animal1Material, animal2Material;
+
 let floorWidth, floorOffset
 let cameraHeight = 2;
 let years = 0
@@ -24,7 +26,7 @@ class Three extends Component {
     constructor(props) {
         super(props);
         animals = props.animals
-        setAnimalLbl = [props.setAnimal0P,props.setAnimal1P,props.setAnimal2P]
+        setAnimalLbl = [props.setAnimal0P, props.setAnimal1P, props.setAnimal2P]
         setYearsLbl = props.setYears
         isPlaying = false
         this.renderLoop = this.renderLoop.bind(this)
@@ -44,16 +46,16 @@ class Three extends Component {
         this.deleteAnimalMesh = this.deleteAnimalMesh.bind(this)
     }
     updateScene() {
-        let time = Math.round((clock.getElapsedTime() -timeLost) * 10) / 10
+        let time = Math.round((clock.getElapsedTime() - timeLost) * 10) / 10
         //If it is a new year
         if (time > nextTime) {
             // console.log("timespeed", timeSpeed)
             //TODO everything goes here
-            years+=1
+            years += 1
             // console.log("year",years)
             animals.forEach((animal, index) => {
                 // console.log(animal)
-                let newP = Math.floor(animal.p0*Math.pow(animal.t + 1,years))
+                let newP = Math.floor(animal.p0 * Math.pow(animal.t + 1, years))
                 //Add animals to the scene
                 this.updateAnimalMeshCount(index, newP)
                 //Change label with how many there are
@@ -102,13 +104,13 @@ class Three extends Component {
     putAnimalMesh(animalIndex) {
         let mesh;
         if (animalIndex === 0) {
-            mesh = new THREE.Mesh(animal0Geometry, animalsMaterial)
+            mesh = new THREE.Mesh(animal0Geometry, animal0Material)
             animals[0].meshes.push(mesh)
         } else if (animalIndex === 1) {
-            mesh = new THREE.Mesh(animal1Geometry, animalsMaterial)
+            mesh = new THREE.Mesh(animal1Geometry, animal1Material)
             animals[1].meshes.push(mesh)
         } else if (animalIndex === 2) {
-            mesh = new THREE.Mesh(animal2Geometry, animalsMaterial)
+            mesh = new THREE.Mesh(animal2Geometry, animal2Material)
             animals[2].meshes.push(mesh)
         }
         this.setAnimalRandomPosition(mesh)
@@ -121,12 +123,19 @@ class Three extends Component {
     setAnimalRandomPosition(mesh) {
         //TODO consider the model width that could exeed the border
         let randomX = Math.random() * floorWidth / 2
-        if (Math.random() > 0.5) { randomX = randomX * -1 }
+        if (Math.random() > 0.5) { //Negative x
+            randomX = randomX * -1 + 0.05 //.05 is the width of the object
+        } else {//Positive x
+            randomX = randomX - 0.05 //.05 is the width of the object
+        }
         //console.log(randomX)
         let randomZ = Math.random() * floorWidth / 2
-        if (Math.random() > 0.5) { randomZ = randomZ * -1 }
+        if (Math.random() > 0.5) { //Negative Z
+            randomZ = randomZ * -1 //.05 is the width of the object
+        } else {//Positive Z
+            randomZ = randomZ - 0.05//.05 is the width of the object
+        }
         //console.log(randomZ)
-        //TODO get the height of the mesh and add half of it to the y position
         //console.log(mesh)
         mesh.position.set(randomX, floorOffset + mesh.geometry.parameters.height / 2, randomZ)
         scene.add(mesh)
@@ -147,16 +156,16 @@ class Three extends Component {
         timeWhenPaused = clock.getElapsedTime()
         isPlaying = false
     }
-    resume(){
+    resume() {
         timeLost += clock.getElapsedTime() - timeWhenPaused
         isPlaying = true
     }
     stop() {
         //console.log("is stopped")
         isPlaying = false
-        this.updateAnimalMeshCount(0,animals[0].p0)
-        this.updateAnimalMeshCount(1,animals[1].p0)
-        this.updateAnimalMeshCount(2,animals[2].p0)
+        this.updateAnimalMeshCount(0, animals[0].p0)
+        this.updateAnimalMeshCount(1, animals[1].p0)
+        this.updateAnimalMeshCount(2, animals[2].p0)
         setAnimalLbl[0](animals[0].p0)
         setAnimalLbl[1](animals[1].p0)
         setAnimalLbl[2](animals[2].p0)
@@ -256,14 +265,17 @@ class Three extends Component {
         // let worldAxes = new THREE.AxesHelper(10);
         //Animals material
         //Change to MeshLambertMaterial to add shadows
-        animalsMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: false });
+        animal0Material = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: false });
+        animal1Material = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: false });
+        animal2Material = new THREE.MeshBasicMaterial({ color: 0x00FF00, wireframe: false });
+
         //Animal0  Geometry
         animal0Geometry = new THREE.BoxGeometry(0.05, 0.05, 0.05)
         //Animal1  Geometry
         animal1Geometry = new THREE.ConeGeometry(0.05, 0.05, 20);
         //Animal2  Geometry
         animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
-        
+
         //Adding Scene Objects
         scene.add(floor)
         scene.add(rightWall)
