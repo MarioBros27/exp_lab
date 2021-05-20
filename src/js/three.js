@@ -10,10 +10,15 @@ import SkyUp from '../img/corona_up.png'
 import SkyDown from '../img/corona_dn.png'
 import SkyLeft from '../img/corona_lf.png'
 import SkyRight from '../img/corona_rt.png'
+import { GLTFLoader } from "./jsm/loaders/GLTFLoader.js";
+import Frame from '../assets/gltf/scene.gltf'
+import Picture1 from '../assets/wallpaper1.jpeg'
+// import binary from '../assets/gltf/picture_frame/scene.bin'
 
 let renderer, scene, camera, cameraControl, isPlaying, isPaused, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
 let animal0Material, animal1Material, animal2Material;
+let pic_frame1;
 let maxWidthOfObject = 0.1
 let floorWidth, floorHeightOffset
 let cameraHeight = 2;
@@ -66,7 +71,7 @@ class Three extends Component {
                 animal.p = newP
                 //Add animals to the scene
                 this.updateAnimalMeshCount(index, newP)
-                
+
             })
             setYearsLbl(years)
             nextTime += timeSpeed
@@ -95,7 +100,7 @@ class Three extends Component {
         let difference = thisMany - animals[animalIndex].meshes.length
         // console.log(animals[animalIndex].meshes.length)
         // let difference = thisMany = animals[animalIndex].p
-        console.log(`For animal ${animalIndex}: ${thisMany}`)
+        // console.log(`For animal ${animalIndex}: ${thisMany}`)
         //console.log(animals)
         if (difference === 0) { return }
         var i
@@ -246,13 +251,13 @@ class Three extends Component {
         //console.log("changinTime:", value)
         timeSpeed = value
     }
-    updateP0(index, value){
+    updateP0(index, value) {
         animals[index].p0 = value
     }
     renderLoop() {
         if (isPlaying) {
             this.updateScene()
-        } else if(isPaused === false) {
+        } else if (isPaused === false) {
             this.updateAnimalMeshCount(0, animals[0].p0)
             this.updateAnimalMeshCount(1, animals[1].p0)
             this.updateAnimalMeshCount(2, animals[2].p0)
@@ -342,10 +347,27 @@ class Three extends Component {
         //Animal2  Geometry
         animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
 
-        // const rectLight = new THREE.RectAreaLight(0xffffff, 1, floorWidth, 0.00001);
-        // rectLight.position.set(0, floorHeightOffset+0.001, 0);
-        // rectLight.lookAt(0, 1, 0);
-        // scene.add(rectLight)
+        //Frames
+        let gltf_loader = new GLTFLoader();
+        gltf_loader.load(Frame, function(gltf) {
+            //Frame
+            const frame = gltf.scene;
+            frame.rotation.y = Math.PI
+            //Picture
+            const geometry = new THREE.PlaneGeometry(16 / 9, 1);
+            const texture = new THREE.TextureLoader().load(Picture1);
+            const material = new THREE.MeshBasicMaterial({ map: texture });
+            const picture = new THREE.Mesh(geometry, material);
+            //Picture with frame
+            pic_frame1 = new THREE.Group();
+            pic_frame1.add(frame);
+            pic_frame1.add(picture);
+
+            pic_frame1.position.y = 1
+            pic_frame1.rotation.y = Math.PI/2
+            pic_frame1.position.x = -1.88
+            scene.add(pic_frame1)
+        });
 
         //Adding Scene Objects
         scene.add(floor)
