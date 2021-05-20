@@ -12,16 +12,20 @@ import SkyLeft from '../img/corona_lf.png'
 import SkyRight from '../img/corona_rt.png'
 import { GLTFLoader } from "./jsm/loaders/GLTFLoader.js";
 import Frame from '../assets/gltf/scene.gltf'
+import Table from '../assets/gltf/table.gltf'
+
 import Picture1 from '../assets/wallpaper1.jpeg'
-// import binary from '../assets/gltf/picture_frame/scene.bin'
+import Pattern from '../assets/black_floor.jpeg'
+import Rick from '../assets/rick.jpeg'
+import Orangutan from '../assets/orangutan.png'
 
 let renderer, scene, camera, cameraControl, isPlaying, isPaused, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
 let animal0Material, animal1Material, animal2Material;
-let pic_frame1;
+let pic_frame1, ground, pic_frame2,pic_frame3, table;
 let maxWidthOfObject = 0.1
 let floorWidth, floorHeightOffset
-let cameraHeight = 2;
+let cameraHeight = 3;
 let years = 0
 let setAnimalLbl, setYearsLbl
 let timeWhenPaused = 0
@@ -307,17 +311,27 @@ class Three extends Component {
         light.position.set(0, 5, 0);
         scene.add(light);
         // MODELS
-        let material = new THREE.MeshLambertMaterial({ color: 0xaaaaaa, wireframe: false });
+        let material = new THREE.MeshLambertMaterial({ color: 0xffffff, wireframe: false });
         // let material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: false });
-
+        let floorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 })
         //Floor
         let floorDepth = 4
         floorWidth = 4
         let floorHeight = 0.4
         floorHeightOffset = floorHeight / 2
         let floorGeometry = new THREE.BoxGeometry(floorWidth, floorHeight, floorDepth);
-        let floor = new THREE.Mesh(floorGeometry, material);
-        floor.position.set(0, 0, 0);
+        let floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.position.set(0, -0.001, 0);
+        const planeGeometry = new THREE.PlaneGeometry(floorDepth, floorWidth);
+        const textureCarpet = new THREE.TextureLoader().load(Pattern);
+        const materialCarpet = new THREE.MeshBasicMaterial({ map: textureCarpet });
+        const carpet = new THREE.Mesh(planeGeometry, materialCarpet);
+        carpet.rotateX(Math.PI / 2 * -1)
+        carpet.position.y = floorHeightOffset
+        ground = new THREE.Group()
+        ground.add(floor)
+        ground.add(carpet)
+        scene.add(ground)
         //Right wall
         let rWallDepth = 0.2
         let rWallWidth = floorWidth
@@ -349,7 +363,7 @@ class Three extends Component {
 
         //Frames
         let gltf_loader = new GLTFLoader();
-        gltf_loader.load(Frame, function(gltf) {
+        gltf_loader.load(Frame, function (gltf) {
             //Frame
             const frame = gltf.scene;
             frame.rotation.y = Math.PI
@@ -364,13 +378,63 @@ class Three extends Component {
             pic_frame1.add(picture);
 
             pic_frame1.position.y = 1
-            pic_frame1.rotation.y = Math.PI/2
+            pic_frame1.rotation.y = Math.PI / 2
             pic_frame1.position.x = -1.88
+            pic_frame1.position.z = 0.5
             scene.add(pic_frame1)
         });
+        gltf_loader.load(Table, function (gltf) {
+            //Frame
+            table = gltf.scene;
+            table.scale.set(0.5, 0.8, 0.5)
+            table.position.set(-1.4, 0, -1.5)
+            scene.add(table)
+        });
+        gltf_loader.load(Frame, function (gltf) {
+            //Frame
+            const frame = gltf.scene;
+            frame.rotation.y = Math.PI
+            //Picture
+            const geometry = new THREE.PlaneGeometry(1, 16 / 9)
+            const texture = new THREE.TextureLoader().load(Rick);
+            const material = new THREE.MeshBasicMaterial({ map: texture });
+            const picture = new THREE.Mesh(geometry, material);
+            picture.rotation.z = Math.PI / 2 * -1
+            //Picture with frame
+            pic_frame2 = new THREE.Group();
+            pic_frame2.add(frame);
+            pic_frame2.add(picture);
+            pic_frame2.rotation.z = Math.PI / 2
+            // pic_frame2.rotation.y = Math.
 
+            pic_frame2.position.y = 1
+            pic_frame2.position.z = -1.88
+
+            pic_frame2.scale.set(0.5,0.5,0.5)
+            scene.add(pic_frame2)
+        });
+        gltf_loader.load(Frame, function (gltf) {
+            //Frame
+            const frame = gltf.scene;
+            frame.rotation.y = Math.PI
+            //Picture
+            const geometry = new THREE.PlaneGeometry(16 / 9,1)
+            const texture = new THREE.TextureLoader().load(Orangutan);
+            const material = new THREE.MeshBasicMaterial({ map: texture });
+            const picture = new THREE.Mesh(geometry, material);
+            //Picture with frame
+            pic_frame3 = new THREE.Group();
+            pic_frame3.add(frame);
+            pic_frame3.add(picture);
+            // pic_frame2.rotation.y = Math.
+
+            pic_frame3.position.y = 1
+            pic_frame3.position.z = -1.88
+            pic_frame3.position.x = 1
+            pic_frame3.scale.set(0.5,0.5,0.5)
+            scene.add(pic_frame3)
+        });
         //Adding Scene Objects
-        scene.add(floor)
         scene.add(rightWall)
         scene.add(leftWall)
         this.initializeAnimalsMeshes()
