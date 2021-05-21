@@ -352,7 +352,7 @@ export default function App() {
           <Divider />
           <div className={classes.slider}>
             <Typography gutterBottom>
-              Velocidad:
+              Lentitud tiempo:
             </Typography>
             <Slider
               key={`slider-${time}`}
@@ -562,13 +562,12 @@ export default function App() {
                 </Typography>
                 <Typography gutterBottom>
                   {"Pn > 0 y Pn-1 > 0 ; Pn > Pn-1"}<br />
-                  {"t < 100 años"}<br />
                 </Typography>
               </Grid>
               {/* <Divider flexItem style={{ marginLeft: "-5px",marginRight:"5px" }} orientation="vertical"/> */}
 
               <Grid item xs={6}>
-                <Typography align="center" variant="h5" gutterBottom>Como usar la aplicación</Typography>
+                <Typography align="center" variant="h5" gutterBottom>Cómo usar la aplicación</Typography>
                 <Typography gutterBottom>
                   1. Modifica las variables y la velocidad del paso de los años(1 año = n segundos)<br />
                   2. Selecciona el botón Play. Puedes cerrar la barra de configuración si quieres.
@@ -586,7 +585,7 @@ export default function App() {
                   Esta ventana la puedes volver a ver en Ayuda que está arriba en la barra lateral siempre y cuando no esté corriendo la simulación.
                 </Typography>
                 <Typography color="primary" gutterBottom>
-                  Si se te detiene antes de lo que quieres simular sube el tiempo que dura un año </Typography>
+                  Si se te detiene antes de lo que quieres simular sube el tiempo que dura un año en el deslizador de lentitud.</Typography>
               </Grid>
             </Grid>
 

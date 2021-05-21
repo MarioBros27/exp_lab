@@ -13,16 +13,16 @@ import SkyRight from '../img/corona_rt.png'
 import { GLTFLoader } from "./jsm/loaders/GLTFLoader.js";
 import Frame from '../assets/gltf/scene.gltf'
 import Table from '../assets/gltf/table.gltf'
+import Cactuses from '../assets/gltf/cactus.gltf'
 
 import Picture1 from '../assets/wallpaper1.jpeg'
 import Pattern from '../assets/black_floor.jpeg'
 import Rick from '../assets/rick.jpeg'
 import Orangutan from '../assets/orangutan.png'
-
 let renderer, scene, camera, cameraControl, isPlaying, isPaused, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
 let animal0Material, animal1Material, animal2Material;
-let pic_frame1, ground, pic_frame2,pic_frame3, table;
+let pic_frame1, ground, pic_frame2,pic_frame3, table, cactus;
 let maxWidthOfObject = 0.1
 let floorWidth, floorHeightOffset
 let cameraHeight = 3;
@@ -31,6 +31,11 @@ let setAnimalLbl, setYearsLbl
 let timeWhenPaused = 0
 let timeLost = 0
 let handleStop;
+let oldAreaWidth = 0
+let newAreaWidth = 4
+let resizePopulationFactor = 6
+let maxPopulationDensity = 25
+let totalPopulation = 0
 
 class Three extends Component {
     constructor(props) {
@@ -152,18 +157,19 @@ class Three extends Component {
     }
     setAnimalRandomPosition(mesh) {
         //TODO consider the model width that could exeed the border
-        let randomX = Math.random() * floorWidth / 2
+        let randomX = Math.random() * newAreaWidth / 2
+        //maxWidthOfObject is the width of each geometry substracted to not touch the wall
         if (Math.random() > 0.5) { //Negative x
-            randomX = randomX * -1 + maxWidthOfObject
+            randomX = randomX * -1 + maxWidthOfObject - oldAreaWidth/2
         } else {//Positive x
-            randomX = randomX - maxWidthOfObject
+            randomX = randomX - maxWidthOfObject + oldAreaWidth/2
         }
         //console.log(randomX)
-        let randomZ = Math.random() * floorWidth / 2
+        let randomZ = Math.random() * newAreaWidth / 2
         if (Math.random() > 0.5) { //Negative Z
-            randomZ = randomZ * -1 + maxWidthOfObject
+            randomZ = randomZ * -1 + maxWidthOfObject - oldAreaWidth/2
         } else {//Positive Z
-            randomZ = randomZ - maxWidthOfObject
+            randomZ = randomZ - maxWidthOfObject + oldAreaWidth/2
         }
         //console.log(randomZ)
         //console.log(mesh)
@@ -202,38 +208,7 @@ class Three extends Component {
         setAnimalLbl[0](animals[0].p0)
         setAnimalLbl[1](animals[1].p0)
         setAnimalLbl[2](animals[2].p0)
-        // console.log(animals[0].meshes.length)
-        // this.updateAnimalMeshCount(0, animals[0].p0)
-        // console.log(animals[0].meshes.length)
-        // console.log("L")
-        // console.log(animals[1].meshes.length)
-        // this.updateAnimalMeshCount(1, animals[1].p0)
-        // console.log(animals[1].meshes.length)
-        // console.log("L")
-        // console.log(animals[2].meshes.length)
-        // this.updateAnimalMeshCount(2, animals[2].p0)
-        // console.log(animals[2].meshes.length)
-        // for(var i = 0; i<3; i++){
-        //     console.log("I",i)
-        //     console.log(animals[i].meshes.length)
-        //     while(animals[1].p0 !==animals[1].meshes.length){
-        //         console.log("updateing:",i)
-        //         this.updateAnimalMeshCount(1, animals[1].p0)
-        //     }
-        //     console.log(animals[i].meshes.length)
-        // }
-        // while(animals[0].p0 !==animals[0].meshes.length){
-        //     console.log("updateing 0")
-        //     this.updateAnimalMeshCount(0, animals[0].p0)
-        // }
-        // while(animals[1].p0 !==animals[1].meshes.length){
-        //     console.log("updateing 1")
-        //     this.updateAnimalMeshCount(1, animals[1].p0)
-        // }
-        // while(animals[2].p0 !==animals[2].meshes.length){
-        //     console.log("updateing 2")
-        //     this.updateAnimalMeshCount(2, animals[2].p0)
-        // }
+
         console.log(animals)
         timeLost = 0
         timeWhenPaused = 0
@@ -384,11 +359,18 @@ class Three extends Component {
             scene.add(pic_frame1)
         });
         gltf_loader.load(Table, function (gltf) {
-            //Frame
+            //Table
             table = gltf.scene;
             table.scale.set(0.5, 0.8, 0.5)
             table.position.set(-1.4, 0, -1.5)
             scene.add(table)
+        });
+        gltf_loader.load(Cactuses, function (gltf) {
+            //Cactus
+            cactus = gltf.scene;
+            cactus.scale.set(2, 2, 2)
+            cactus.position.set(-1.4, 0.65, -1.5)
+            scene.add(cactus)
         });
         gltf_loader.load(Frame, function (gltf) {
             //Frame
