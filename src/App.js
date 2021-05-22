@@ -525,7 +525,6 @@ export default function App() {
       </main> */}
         <Dialog classes={{ paper: classes.dialogPaper }} aria-labelledby="customized-dialog-title" open={showInfo}>
           <DialogTitle disableTypography>
-            <Typography variant="h4">¡Bienvenido!</Typography>
             <IconButton aria-label="close" className={classes.closeButton} onClick={() => { setShowInfo(false) }}>
               <CloseIcon />
             </IconButton>

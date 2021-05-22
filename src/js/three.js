@@ -22,7 +22,7 @@ import Orangutan from '../assets/orangutan.png'
 let renderer, scene, camera, cameraControl, isPlaying, isPaused, animals, clock, timeSpeed, nextTime;
 let animal0Geometry, animal1Geometry, animal2Geometry;
 let animal0Material, animal1Material, animal2Material;
-let pic_frame1, ground, rightStuff;
+let pic_frame1, ground, rightStuff, rightWall, leftWall;
 let maxWidthOfObject = 0.1
 let floorWidth, floorHeightOffset
 let cameraHeight = 3;
@@ -33,10 +33,10 @@ let timeLost = 0
 let handleStop;
 let oldAreaWidth = 0
 let newAreaWidth = 4
-let resizePopulationFactor = 6
+let resizePopulationFactor = 4
 let maxPopulationDensity = 25
 let totalPopulation = 0
-
+let hasResized = false
 class Three extends Component {
     constructor(props) {
         super(props);
@@ -62,6 +62,8 @@ class Three extends Component {
         this.putAnimalMesh = this.putAnimalMesh.bind(this)
         this.deleteAnimalMesh = this.deleteAnimalMesh.bind(this)
         this.updateP0 = this.updateP0.bind(this)
+        this.resize = this.resize.bind(this)
+        this.resetSize = this.resetSize.bind(this)
     }
     updateScene() {
         let time = Math.round((clock.getElapsedTime() - timeLost) * 10) / 10
@@ -85,8 +87,8 @@ class Three extends Component {
             setYearsLbl(years)
             nextTime += timeSpeed
         }
-
     }
+
     initializeAnimalsMeshes() {
         this.setUpPlayingScene()
         animals[0].meshes = []
@@ -154,27 +156,107 @@ class Three extends Component {
         const animal = animals[animalIndex].meshes.pop()
         // console.log(animals[animalIndex].meshes.length)
         scene.remove(animal)
+        totalPopulation -= 1
     }
     setAnimalRandomPosition(mesh) {
         //TODO consider the model width that could exeed the border
-        let randomX = Math.random() * newAreaWidth / 2
-        //maxWidthOfObject is the width of each geometry substracted to not touch the wall
-        if (Math.random() > 0.5) { //Negative x
-            randomX = randomX * -1 + maxWidthOfObject - oldAreaWidth / 2
-        } else {//Positive x
-            randomX = randomX - maxWidthOfObject + oldAreaWidth / 2
+        let newLength = newAreaWidth / 2
+        let oldLength = oldAreaWidth / 2
+        let randomX = Math.random()
+        let randomZ = Math.random()
+
+        if (hasResized) {
+            let random = Math.random()
+            if (random < 1 / 12) {
+                //Corner
+                randomX = randomX * (newLength - oldLength) + oldLength
+                randomZ = randomZ * (newLength - oldLength) + oldLength
+            } else if (random < 2 / 12) {
+                //Corner
+                randomX = (randomX * (newLength - oldLength) + oldLength) * -1
+                randomZ = randomZ * (newLength - oldLength) + oldLength
+            } else if (random < 3 / 12) {
+                //Corner
+                randomX = randomX * (newLength - oldLength) + oldLength
+                randomZ = (randomZ * (newLength - oldLength) + oldLength) * -1
+            } else if (random < 4 / 12) {
+                //Corner
+                randomX = (randomX * (newLength - oldLength) + oldLength) * -1
+                randomZ = (randomZ * (newLength - oldLength) + oldLength) * -1
+            } else if (random < 6 / 12) {
+                //Side positive X
+                randomX = randomX * (newLength - oldLength) + oldLength
+                randomZ = Math.random() > 0.5 ? randomZ * oldLength : randomZ * oldLength * -1
+            } else if (random < 8 / 12) {
+                //Side negative X
+                randomX = (randomX * (newLength - oldLength) + oldLength) * -1
+                randomZ = Math.random() > 0.5 ? randomZ * oldLength : randomZ * oldLength * -1
+            } else if (random < 10 / 12) {
+                //Side positive Z
+                randomX = Math.random() > 0.5 ? randomX * oldLength : randomX * oldLength * -1
+                randomZ = randomZ * (newLength - oldLength) + oldLength
+            } else {
+                //Side negative Z
+                randomX = Math.random() > 0.5 ? randomX * oldLength : randomX * oldLength * -1
+                randomZ = (randomZ * (newLength - oldLength) + oldLength) * -1
+            }
+
+        } else {//Scene has not been resized
+            randomX = randomX * newLength
+            if (Math.random() > 0.5) { //Negative x
+                randomX = randomX * -1 + maxWidthOfObject
+            } else {//Positive x
+                randomX = randomX - maxWidthOfObject
+            }
+            randomZ = randomZ * newLength
+            if (Math.random() > 0.5) { //Negative Z
+                randomZ = randomZ * -1 + maxWidthOfObject
+            } else {//Positive Z
+                randomZ = randomZ - maxWidthOfObject
+            }
         }
-        //console.log(randomX)
-        let randomZ = Math.random() * newAreaWidth / 2
-        if (Math.random() > 0.5) { //Negative Z
-            randomZ = randomZ * -1 + maxWidthOfObject - oldAreaWidth / 2
-        } else {//Positive Z
-            randomZ = randomZ - maxWidthOfObject + oldAreaWidth / 2
-        }
-        //console.log(randomZ)
-        //console.log(mesh)
+
         mesh.position.set(randomX, floorHeightOffset + mesh.geometry.parameters.height / 2, randomZ)
         scene.add(mesh)
+        //Resizing logic
+        totalPopulation += 1
+        //See if resizing is needed
+        let density = totalPopulation / (newAreaWidth * newAreaWidth - oldAreaWidth * oldAreaWidth)
+        if (density >= maxPopulationDensity) {
+            this.resize()
+        }
+    }
+    resize() {
+        //Calculate resizing needed; due to exponential behaviour it can't be constant or lineal
+        //Future total based on resize population factor
+        //Resize population factor is how many years in the future from current year calculate the total population
+        let futurePopulation = 0
+        animals.forEach((animal) => {
+            let newP = Math.floor(animal.p0 * Math.pow(animal.t + 1, years + resizePopulationFactor));
+            futurePopulation += newP
+        })
+        let areaNeeded = futurePopulation / maxPopulationDensity
+        oldAreaWidth = newAreaWidth
+        newAreaWidth = Math.sqrt(areaNeeded)
+        let scaleConstant = newAreaWidth / ground.children[0].geometry.parameters.width
+        //resize floor
+        ground.scale.set(scaleConstant, 1, scaleConstant)
+        //resizeWalls
+        rightWall.scale.set(scaleConstant, 1, 1)
+        leftWall.scale.set(scaleConstant, 1, 1)//It is in x instead of z because it is rotated
+        //Move walls
+        rightWall.position.set(0, rightWall.position.y, newAreaWidth / 2 * -1)
+        leftWall.position.set(newAreaWidth / 2 * -1, leftWall.position.y, 0)
+        //Move wall decorations
+        let delta = (newAreaWidth / 2 - oldAreaWidth / 2)
+        //Left side
+        pic_frame1.position.x -= delta
+        //RIght side
+        rightStuff.position.z -= delta
+        //Move Camera
+        camera.position.set(camera.position.x, cameraHeight * newAreaWidth / floorWidth, camera.position.z)
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        hasResized = true
     }
     play(animalsIn, timeSpeedIn) {
         animals = animalsIn
@@ -187,6 +269,9 @@ class Three extends Component {
         clock = new THREE.Clock()
         isPaused = false
         isPlaying = true
+        oldAreaWidth = 0
+        newAreaWidth = floorWidth
+        // console.log(totalPopulation)
     }
     pause() {
         //console.log("is paused")
@@ -203,8 +288,10 @@ class Three extends Component {
         //console.log("is stopped")
         isPaused = false
         isPlaying = false
+        hasResized = false
+        
+
         handleStop()
-        console.log(animals)
         setAnimalLbl[0](animals[0].p0)
         setAnimalLbl[1](animals[1].p0)
         setAnimalLbl[2](animals[2].p0)
@@ -215,11 +302,26 @@ class Three extends Component {
         years = 0
         setYearsLbl(years)
         clock.stop()
+
+        this.resetCamera()
+        this.resetSize()
     }
     resetCamera() {
         camera.position.set(3, cameraHeight, 3);
         camera.up = new THREE.Vector3(0, 1, 0);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
+    }
+    resetSize() {
+        leftWall.position.x = floorWidth/2* -1
+        rightWall.position.z = floorWidth/2 * -1
+        ground.scale.set(1, 1, 1)
+        leftWall.scale.set(1, 1, 1)
+        rightWall.scale.set(1, 1, 1)
+        pic_frame1.position.x = -1.88
+        pic_frame1.position.z = 0.5
+        rightStuff.position.z = 0
+
+        
     }
     resizeFrame() {
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -240,6 +342,8 @@ class Three extends Component {
             this.updateAnimalMeshCount(0, animals[0].p0)
             this.updateAnimalMeshCount(1, animals[1].p0)
             this.updateAnimalMeshCount(2, animals[2].p0)
+            oldAreaWidth = 0
+            newAreaWidth = floorWidth
         }
         renderer.render(scene, camera);
         requestAnimationFrame(this.renderLoop);
@@ -290,14 +394,13 @@ class Three extends Component {
         // let material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: false });
         let floorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 })
         //Floor
-        let floorDepth = 4
         floorWidth = 4
         let floorHeight = 0.4
         floorHeightOffset = floorHeight / 2
-        let floorGeometry = new THREE.BoxGeometry(floorWidth, floorHeight, floorDepth);
+        let floorGeometry = new THREE.BoxGeometry(floorWidth, floorHeight, floorWidth);
         let floor = new THREE.Mesh(floorGeometry, floorMaterial);
         floor.position.set(0, -0.001, 0);
-        const planeGeometry = new THREE.PlaneGeometry(floorDepth, floorWidth);
+        const planeGeometry = new THREE.PlaneGeometry(floorWidth, floorWidth);
         const textureCarpet = new THREE.TextureLoader().load(Pattern);
         const materialCarpet = new THREE.MeshBasicMaterial({ map: textureCarpet });
         const carpet = new THREE.Mesh(planeGeometry, materialCarpet);
@@ -312,14 +415,14 @@ class Three extends Component {
         let rWallWidth = floorWidth
         let rWallHeight = 2
         let rWallGeometry = new THREE.BoxGeometry(rWallWidth, rWallHeight, rWallDepth);
-        let rightWall = new THREE.Mesh(rWallGeometry, material);
+        rightWall = new THREE.Mesh(rWallGeometry, material);
         rightWall.position.set(0, rWallHeight / 2 - floorHeight / 2, rWallWidth / 2 * -1);
         //Left wall
         let lWallDepth = 0.2
         let lWallWidth = floorWidth
         let lWallHeight = 2
         let lWallGeometry = new THREE.BoxGeometry(lWallWidth, lWallHeight, lWallDepth);
-        let leftWall = new THREE.Mesh(lWallGeometry, material);
+        leftWall = new THREE.Mesh(lWallGeometry, material);
         leftWall.position.set(floorWidth / 2 * -1, lWallHeight / 2 - floorHeight / 2, 0);
         leftWall.rotation.y = Math.PI / 2
         // let worldAxes = new THREE.AxesHelper(10);
@@ -418,12 +521,12 @@ class Three extends Component {
                         pic_frame3.position.x = 1
                         pic_frame3.scale.set(0.5, 0.5, 0.5)
                         rightStuff.add(pic_frame3)
+                        // console.log(rightStuff.position.z)
                         scene.add(rightStuff)
                     });
                 });
             });
         });
-
 
         //Adding Scene Objects
         scene.add(rightWall)
