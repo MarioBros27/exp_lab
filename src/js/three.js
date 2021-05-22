@@ -20,9 +20,9 @@ import Pattern from '../assets/black_floor.jpeg'
 import Rick from '../assets/rick.jpeg'
 import Orangutan from '../assets/orangutan.png'
 let renderer, scene, camera, cameraControl, isPlaying, isPaused, animals, clock, timeSpeed, nextTime;
-let animal0Geometry, animal1Geometry, animal2Geometry, animalsMaterial;
+let animal0Geometry, animal1Geometry, animal2Geometry;
 let animal0Material, animal1Material, animal2Material;
-let pic_frame1, ground, pic_frame2,pic_frame3, table, cactus;
+let pic_frame1, ground, rightStuff;
 let maxWidthOfObject = 0.1
 let floorWidth, floorHeightOffset
 let cameraHeight = 3;
@@ -160,16 +160,16 @@ class Three extends Component {
         let randomX = Math.random() * newAreaWidth / 2
         //maxWidthOfObject is the width of each geometry substracted to not touch the wall
         if (Math.random() > 0.5) { //Negative x
-            randomX = randomX * -1 + maxWidthOfObject - oldAreaWidth/2
+            randomX = randomX * -1 + maxWidthOfObject - oldAreaWidth / 2
         } else {//Positive x
-            randomX = randomX - maxWidthOfObject + oldAreaWidth/2
+            randomX = randomX - maxWidthOfObject + oldAreaWidth / 2
         }
         //console.log(randomX)
         let randomZ = Math.random() * newAreaWidth / 2
         if (Math.random() > 0.5) { //Negative Z
-            randomZ = randomZ * -1 + maxWidthOfObject - oldAreaWidth/2
+            randomZ = randomZ * -1 + maxWidthOfObject - oldAreaWidth / 2
         } else {//Positive Z
-            randomZ = randomZ - maxWidthOfObject + oldAreaWidth/2
+            randomZ = randomZ - maxWidthOfObject + oldAreaWidth / 2
         }
         //console.log(randomZ)
         //console.log(mesh)
@@ -336,8 +336,10 @@ class Three extends Component {
         //Animal2  Geometry
         animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
 
-        //Frames
+        //Decorations
         let gltf_loader = new GLTFLoader();
+        rightStuff = new THREE.Group();
+        //Left side of the room
         gltf_loader.load(Frame, function (gltf) {
             //Frame
             const frame = gltf.scene;
@@ -358,64 +360,71 @@ class Three extends Component {
             pic_frame1.position.z = 0.5
             scene.add(pic_frame1)
         });
+        //RIght side of the room
         gltf_loader.load(Table, function (gltf) {
             //Table
-            table = gltf.scene;
+            let tableSetup = new THREE.Group()
+            let table = gltf.scene;
             table.scale.set(0.5, 0.8, 0.5)
             table.position.set(-1.4, 0, -1.5)
-            scene.add(table)
-        });
-        gltf_loader.load(Cactuses, function (gltf) {
-            //Cactus
-            cactus = gltf.scene;
-            cactus.scale.set(2, 2, 2)
-            cactus.position.set(-1.4, 0.65, -1.5)
-            scene.add(cactus)
-        });
-        gltf_loader.load(Frame, function (gltf) {
-            //Frame
-            const frame = gltf.scene;
-            frame.rotation.y = Math.PI
-            //Picture
-            const geometry = new THREE.PlaneGeometry(1, 16 / 9)
-            const texture = new THREE.TextureLoader().load(Rick);
-            const material = new THREE.MeshBasicMaterial({ map: texture });
-            const picture = new THREE.Mesh(geometry, material);
-            picture.rotation.z = Math.PI / 2 * -1
-            //Picture with frame
-            pic_frame2 = new THREE.Group();
-            pic_frame2.add(frame);
-            pic_frame2.add(picture);
-            pic_frame2.rotation.z = Math.PI / 2
-            // pic_frame2.rotation.y = Math.
+            tableSetup.add(table)
+            gltf_loader.load(Cactuses, function (gltf2) {
+                //Cactus
+                let cactus = gltf2.scene;
+                cactus.scale.set(2, 2, 2)
+                cactus.position.set(-1.4, 0.65, -1.5)
+                tableSetup.add(cactus)
+                rightStuff.add(tableSetup)
+                gltf_loader.load(Frame, function (gltf) {
+                    //Frame
+                    const frame = gltf.scene;
+                    frame.rotation.y = Math.PI
+                    //Picture
+                    const geometry = new THREE.PlaneGeometry(1, 16 / 9)
+                    const texture = new THREE.TextureLoader().load(Rick);
+                    const material = new THREE.MeshBasicMaterial({ map: texture });
+                    const picture = new THREE.Mesh(geometry, material);
+                    picture.rotation.z = Math.PI / 2 * -1
+                    //Picture with frame
+                    let pic_frame2 = new THREE.Group();
+                    pic_frame2.add(frame);
+                    pic_frame2.add(picture);
+                    pic_frame2.rotation.z = Math.PI / 2
+                    // pic_frame2.rotation.y = Math.
 
-            pic_frame2.position.y = 1
-            pic_frame2.position.z = -1.88
+                    pic_frame2.position.y = 1
+                    pic_frame2.position.z = -1.88
 
-            pic_frame2.scale.set(0.5,0.5,0.5)
-            scene.add(pic_frame2)
-        });
-        gltf_loader.load(Frame, function (gltf) {
-            //Frame
-            const frame = gltf.scene;
-            frame.rotation.y = Math.PI
-            //Picture
-            const geometry = new THREE.PlaneGeometry(16 / 9,1)
-            const texture = new THREE.TextureLoader().load(Orangutan);
-            const material = new THREE.MeshBasicMaterial({ map: texture });
-            const picture = new THREE.Mesh(geometry, material);
-            //Picture with frame
-            pic_frame3 = new THREE.Group();
-            pic_frame3.add(frame);
-            pic_frame3.add(picture);
-            // pic_frame2.rotation.y = Math.
+                    pic_frame2.scale.set(0.5, 0.5, 0.5)
+                    rightStuff.add(pic_frame2)
 
-            pic_frame3.position.y = 1
-            pic_frame3.position.z = -1.88
-            pic_frame3.position.x = 1
-            pic_frame3.scale.set(0.5,0.5,0.5)
-            scene.add(pic_frame3)
+                    gltf_loader.load(Frame, function (gltf) {
+                        //Frame
+                        const frame = gltf.scene;
+                        frame.rotation.y = Math.PI
+                        //Picture
+                        const geometry = new THREE.PlaneGeometry(16 / 9, 1)
+                        const texture = new THREE.TextureLoader().load(Orangutan);
+                        const material = new THREE.MeshBasicMaterial({ map: texture });
+                        const picture = new THREE.Mesh(geometry, material);
+                        //Picture with frame
+                        let pic_frame3 = new THREE.Group();
+                        pic_frame3.add(frame);
+                        pic_frame3.add(picture);
+                        // pic_frame2.rotation.y = Math.
+
+                        pic_frame3.position.y = 1
+                        pic_frame3.position.z = -1.88
+                        pic_frame3.position.x = 1
+                        pic_frame3.scale.set(0.5, 0.5, 0.5)
+                        rightStuff.add(pic_frame3)
+                        scene.add(rightStuff)
+                    });
+                });
+            });
         });
+
+
         //Adding Scene Objects
         scene.add(rightWall)
         scene.add(leftWall)
