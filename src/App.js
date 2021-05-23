@@ -262,7 +262,7 @@ export default function App() {
           className={clsx(classes.appBar, {
             [classes.appBarShift]: open,
           })}
-          style={{ background: 'transparent', boxShadow: 'none' }}
+          style={{ background: '#000000', boxShadow: 'none' }}
         >
           <Toolbar variant='dense'>
             <IconButton

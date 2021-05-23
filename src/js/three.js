@@ -25,7 +25,7 @@ let animal0Material, animal1Material, animal2Material;
 let pic_frame1, ground, rightStuff, rightWall, leftWall;
 let maxWidthOfObject = 0.1
 let floorWidth, floorHeightOffset
-let cameraHeight = 3;
+let cameraHeight = 2.5;
 let years = 0
 let setAnimalLbl, setYearsLbl
 let timeWhenPaused = 0
@@ -107,7 +107,7 @@ class Three extends Component {
 
     }
     updateAnimalMeshCount(animalIndex, thisMany) {
-        if (thisMany <= 0) { return }
+        if (thisMany < 0) { return }
         let difference = thisMany - animals[animalIndex].meshes.length
         // console.log(animals[animalIndex].meshes.length)
         // let difference = thisMany = animals[animalIndex].p
@@ -134,7 +134,9 @@ class Three extends Component {
         if (isPlaying) {
             let time = Math.round((clock.getElapsedTime() - timeLost) * 10) / 10
             if (time > nextTime + timeSpeed) {//IF objects haven't been added to the scene in time stop
+                let st = `Hasta aquí llego el poder de tu computadora.\nSi quieres simular mas tiempo, disminuye la velocidad.\nAños: ${years} ;Rojos: ${animals[0].p} ; Azules: ${animals[1].p} ;Verdes: ${animals[2].p}\n\nLimpiaré el desastre después de que cierres esta alerta...`
                 this.stop()
+                alert(st)
             }
         }
 
@@ -289,7 +291,6 @@ class Three extends Component {
         isPaused = false
         isPlaying = false
         hasResized = false
-        
 
         handleStop()
         setAnimalLbl[0](animals[0].p0)
@@ -384,8 +385,6 @@ class Three extends Component {
         camera.lookAt(new THREE.Vector3(0, 0, 0));
         cameraControl = new OrbitControls(camera, renderer.domElement);
         // Light
-        // const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
-        // scene.add(light);
         const light = new THREE.PointLight(0xffffff, 1, 100);
         light.position.set(0, 5, 0);
         scene.add(light);
@@ -433,9 +432,9 @@ class Three extends Component {
         animal2Material = new THREE.MeshBasicMaterial({ color: 0x00FF00, wireframe: false });
 
         //Animal0  Geometry
-        animal0Geometry = new THREE.BoxGeometry(0.05, 0.05, 0.05)
+        animal0Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
         //Animal1  Geometry
-        animal1Geometry = new THREE.ConeGeometry(0.05, 0.05, 20);
+        animal1Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
         //Animal2  Geometry
         animal2Geometry = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 20);
 
