@@ -428,7 +428,7 @@ class Three extends Component {
         //Animals material
         //Change to MeshLambertMaterial to add shadows
         animal0Material = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: false });
-        animal1Material = new THREE.MeshBasicMaterial({ color: 0x0000FF, wireframe: false });
+        animal1Material = new THREE.MeshBasicMaterial({ color: 0x89cff0, wireframe: false });
         animal2Material = new THREE.MeshBasicMaterial({ color: 0x00FF00, wireframe: false });
 
         //Animal0  Geometry
